@@ -1,6 +1,9 @@
 # Parking_Ville
 Public car space parking system
 
+## Installing application on your local machine
+In order to install the application, clone the remote repository to your local machine using the following command in the terminal of your IDE
+
 `git clone https://github.com/davidkaggulire/parkville_parking.git`
 
 `cd` into the project directory.
@@ -12,19 +15,19 @@ You can now activate your virtual environment using
 
 `source venv/bin/activate`
 
-# Installing dependencies
+## Installing dependencies
 To install dependencies needed, use the following command
 
  `pip install -r requirements.txt`
 
-# Running the project
+## Running the project
 Type `export FLASK_APP=run.py`
 
 To run type `flask run`
 
 Or simply type `python run.py`
 
-# Running Unit Tests
+## Running Unit Tests
 You can run unit tests using this command 
 
 
