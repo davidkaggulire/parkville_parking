@@ -16,7 +16,7 @@ class CreateSchema(Schema):
                           "required": "Color is required."}, validate=validate.Length(min=1))
     model = fields.String(required=True, error_messages={
         "required": "Model is required."})
-    phone_number = fields.Number(required=True, error_messages={
+    phone_number = fields.String(required=True, error_messages={
                                  "required": "phone_number is required."})
     nin_number = fields.String(required=True, error_messages={
                                  "required": "NIN_number is required."}, validate=[validate.Length(equal=14, error="NIN number must be 14 characters"), validate.ContainsOnly(NIN, error="Letters should be capital")])
@@ -25,4 +25,4 @@ class CreateSchema(Schema):
     charge_value = fields.Integer(required=True, error_messages={
         "required": "Charge_value is required."})
     vehicle_type = fields.String(required=True, error_messages={
-                                 "required": "Vehicle_type is required."}, validate=validate.Length(min=1))
+                                 "required": "vehicle_type is required."}, validate=validate.Length(min=1))
