@@ -41,49 +41,71 @@ class VehicleList(Resource):
 
         print(data)
 
+        driver_name = data["driver_name"]
+        number_plate = data["number_plate"]
+        color = data["color"]
+        model = data["model"]
+        phone_number = data["phone_number"]
+
+        # validate phone number
         try:
+            my_number = phonenumbers.parse(phone_number)
+            phonenumbers.is_valid_number(my_number)
+        except phonenumbers.NumberParseException as e:
+            hello = json.dumps(e, default=str)
+            return make_response(jsonify({"error": hello}), 400)
 
-            driver_name = data["driver_name"]
-            number_plate = data["number_plate"]
-            color = data["color"]
-            model = data["model"]
-            phone_number = data["phone_number"]
+        nin_number = data["nin_number"]
 
-            # validate phone number
-            try:
-                my_number = phonenumbers.parse(phone_number)
-                phonenumbers.is_valid_number(my_number)
-            except phonenumbers.NumberParseException as e:
-                hello = json.dumps(e, default=str)
-                return make_response(jsonify({"error": hello}), 400)
+        car_type = data["car_type"]
+        gender = data["gender"]
 
-            nin_number = data["nin_number"]
+        try:
+            user = Vehicle.query.filter_by(
+                driver_name=driver_name, number_plate=number_plate, flag="admitted").first_or_404()
 
-            vehicle_type = data["vehicle_type"]
-            gender = data["gender"]
-
-            new_dict = {
-                "driver_name": driver_name,
-                "number_plate": number_plate,
-                "color": color,
-                "model": model,
-                "phone_number": phone_number,
-                "nin_number": nin_number,
-                "cartype_id": vehicle_type,
-                'gender': gender
-            }
-
-            new_data = Vehicle(**new_dict)
-
-            # new_data = Vehicle(**data)
-            db.session.add(new_data)
-            db.session.commit()
-            print(data)
-
-            return Vehicle.serialize(new_data), 201
+            if user:
+                message = {
+                    "status": "fail",
+                    "message": "Car admitted already"
+                }
+                return make_response(jsonify(message), 400)
         except Exception as e:
-            print(e)
-            return jsonify()
+            try:
+                new_dict = {
+                    "driver_name": driver_name,
+                    "number_plate": number_plate,
+                    "color": color,
+                    "model": model,
+                    "phone_number": phone_number,
+                    "nin_number": nin_number,
+                    "cartype_id": car_type,
+                    'gender': gender
+                }
+
+                new_data = Vehicle(**new_dict)
+
+                # new_data = Vehicle(**data)
+                db.session.add(new_data)
+                db.session.commit()
+                print(data)
+
+                return Vehicle.serialize(new_data), 201
+            except Exception as e:
+                print(e)
+                error = {
+                    "status": "fail",
+                    "error": str(e)
+                }
+                return make_response(jsonify(error), 400)
+
+
+class VehicleRetrieve(Resource):
+    def get(self, vehicle_id):
+        return Vehicle.serialize(
+            Vehicle.query.filter_by(id=vehicle_id)
+                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))), 200
 
 
 api.add_resource(VehicleList, "/vehicle")
+api.add_resource(VehicleRetrieve, '/vehicle/<vehicle_id>')
