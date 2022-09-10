@@ -20,7 +20,7 @@ class CreateSchema(Schema):
                                  "required": "phone_number is required."})
     nin_number = fields.String(required=True, error_messages={
                                  "required": "NIN_number is required."}, validate=[validate.Length(equal=14, error="NIN number must be 14 characters"), validate.ContainsOnly(NIN, error="Letters should be capital")])
-    vehicle_type = fields.String(required=True, error_messages={
-                                 "required": "vehicle_type is required."}, validate=validate.Length(min=1))
+    car_type = fields.String(required=True, error_messages={
+                                 "required": "car_type is required."}, validate=validate.Length(min=1))
     gender = fields.String(required=True, validate=validate.OneOf({"male", "female", "other"}), error_messages={
         "required": "gender is required."})
