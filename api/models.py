@@ -23,7 +23,7 @@ class Truckcharge(db.Model):
 
     def serialize(self):
         return {
-            'id': self.id,
+            'id': str(self.id),
             'charge': self.charge,
             'duration': self.duration,
         }
@@ -37,7 +37,7 @@ class Taxicharge(db.Model):
 
     def serialize(self):
         return {
-            'id': self.id,
+            'id': str(self.id),
             'charge': self.charge,
             'duration': self.duration,
         }
@@ -51,7 +51,7 @@ class Coastercharge(db.Model):
 
     def serialize(self):
         return {
-            'id': self.id,
+            'id': str(self.id),
             'charge': self.charge,
             'duration': self.duration,
         }
@@ -65,7 +65,7 @@ class Carcharge(db.Model):
 
     def serialize(self):
         return {
-            'id': self.id,
+            'id': str(self.id),
             'charge': self.charge,
             'duration': self.duration,
         }
@@ -79,7 +79,7 @@ class Bodacharge(db.Model):
 
     def serialize(self):
         return {
-            'id': self.id,
+            'id': str(self.id),
             'charge': self.charge,
             'duration': self.duration,
         }
@@ -98,13 +98,18 @@ class Vehicle(db.Model):
     created_at = db.Column(db.DateTime, nullable=False,
                            default=datetime.utcnow)
     gender = db.Column(db.Enum('male', 'female', 'other', name='varchar'))
+    flag = db.Column(db.String(80), nullable=False, default="admitted")
     cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
                            nullable=False)
+    
 
     def __repr__(self) -> str:
         return self.driver_name
 
     def serialize(self):
+        car_type = Cartype.query.filter_by(id=self.cartype_id).first_or_404(
+            description='Record with id={} is not available'.format(self.cartype_id))
+
         return {
             'id': str(self.id),
             'driver_name': self.driver_name,
@@ -115,7 +120,7 @@ class Vehicle(db.Model):
             'nin_number': self.nin_number,
             'created_at': str(self.created_at),
             'gender': self.gender,
-            'cartype': self.cartype_id.type
+            'car_type': car_type.type
         }
 
 
