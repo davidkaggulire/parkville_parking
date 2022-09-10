@@ -1,5 +1,4 @@
-from operator import length_hint
-from ..models import Charge, Vehicle
+from ..models import Cartype, Vehicle
 
 
 def response_serializer(vehicles: Vehicle):
@@ -7,8 +6,6 @@ def response_serializer(vehicles: Vehicle):
 
     for vehicle in vehicles:
 
-        charge = Charge.query.filter_by(id=vehicle.charge_id).first_or_404(
-            description='Record with id={} is not available'.format(vehicle.charge_id))
         vehicle_dict = {
             "id": str(vehicle.id),
             "driver_name": vehicle.driver_name,
@@ -16,11 +13,8 @@ def response_serializer(vehicles: Vehicle):
             "model": vehicle.model,
             "phone_number": vehicle.phone_number,
             "nin_number": vehicle.nin_number,
-            "duration_type": vehicle.duration_type,
-            "charge_value": vehicle.charge_value,
-            "vehicle_type": charge.vehicle_type,
             "created_at": str(vehicle.created_at),
-            "status": vehicle.status,
+            "gender": vehicle.gender,
         }
 
         response.append(vehicle_dict)
@@ -29,6 +23,27 @@ def response_serializer(vehicles: Vehicle):
         "status": "success",
         "results": len(response),
         "vehicles": response
+    }
+
+    return final_output
+
+
+def car_type_serializer(cartypes: Cartype):
+    response = []
+
+    for cartype in cartypes:
+
+        car_type_dict = {
+            "id": str(cartype.id),
+            "type": cartype.type,
+        }
+
+        response.append(car_type_dict)
+
+    final_output = {
+        "status": "success",
+        "results": len(response),
+        "car_types": response
     }
 
     return final_output
