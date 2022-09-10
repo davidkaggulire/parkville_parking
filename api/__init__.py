@@ -28,6 +28,7 @@ migrate = Migrate(app, db)
 # to eliminate circular imports
 from api.routes import vehicle_routes
 from api.routes import charge_routes
+from api.routes import cartype_routes
 
 
 

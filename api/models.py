@@ -1,6 +1,5 @@
 # models
 
-from email.policy import default
 from enum import unique
 from api import db
 from datetime import datetime
@@ -9,21 +8,80 @@ import sqlalchemy.dialects.postgresql as postgresql
 import uuid
 
 
-class Charge(db.Model):
+class Cartype(db.Model):
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
-    vehicle_type = db.Column(db.String(80), nullable=False)
-    day_charge = db.Column(db.String(80), nullable=False)
-    night_charge = db.Column(db.String(80), nullable=False)
-    hour_charge = db.Column(db.String(80), nullable=False)
-    vehicle = db.relationship('Vehicle', backref='charge', lazy=True)
+    type = db.Column(db.String(80), unique=True, nullable=False)
+    vehicle = db.relationship('Vehicle', backref='cartype', lazy=True)
+
+
+class Truckcharge(db.Model):
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    charge = db.Column(db.String(80), nullable=False)
+    duration = db.Column(db.String(80), unique=True, nullable=False)
 
     def serialize(self):
         return {
             'id': self.id,
-            'day_charge': self.day_charge,
-            'night_charge': self.night_charge,
-            'hour_charge': self.hour_charge,
+            'charge': self.charge,
+            'duration': self.duration,
+        }
+
+
+class Taxicharge(db.Model):
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    charge = db.Column(db.String(80), nullable=False)
+    duration = db.Column(db.String(80), unique=True, nullable=False)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'charge': self.charge,
+            'duration': self.duration,
+        }
+
+
+class Coastercharge(db.Model):
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    charge = db.Column(db.String(80), nullable=False)
+    duration = db.Column(db.String(80), unique=True, nullable=False)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'charge': self.charge,
+            'duration': self.duration,
+        }
+
+
+class Carcharge(db.Model):
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    charge = db.Column(db.String(80), nullable=False)
+    duration = db.Column(db.String(80), unique=True, nullable=False)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'charge': self.charge,
+            'duration': self.duration,
+        }
+
+
+class Bodacharge(db.Model):
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    charge = db.Column(db.String(80), nullable=False)
+    duration = db.Column(db.String(80), unique=True, nullable=False)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'charge': self.charge,
+            'duration': self.duration,
         }
 
 
@@ -37,28 +95,80 @@ class Vehicle(db.Model):
     model = db.Column(db.String(80), nullable=False)
     phone_number = db.Column(db.String(80), nullable=False)
     nin_number = db.Column(db.String(80), nullable=False)
-    duration_type = db.Column(db.String(80),  nullable=False)
-    charge_value = db.Column(db.String(80), nullable=False)
-    status = db.Column(db.String(100), nullable=False, default="parked")
     created_at = db.Column(db.DateTime, nullable=False,
                            default=datetime.utcnow)
-    charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('charge.id'),
-                          nullable=False)
+    gender = db.Column(db.Enum('male', 'female', 'other', name='varchar'))
+    cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
+                           nullable=False)
 
     def __repr__(self) -> str:
         return self.driver_name
 
     def serialize(self):
         return {
-            'id': self.id,
+            'id': str(self.id),
             'driver_name': self.driver_name,
             'number_plate': self.number_plate,
             'color': self.color,
             'model': self.model,
             'phone_number': self.phone_number,
             'nin_number': self.nin_number,
-            'duration_type': self.duration_type,
-            'charge_value': self.charge_value,
-            'status': self.status,
-            'created_at': self.created_at,
+            'created_at': str(self.created_at),
+            'gender': self.gender,
+            'cartype': self.cartype_id.type
         }
+
+
+class PaymentCar(db.Model):
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
+                           nullable=False)
+    cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
+                           nullable=False)
+    charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('carcharge.id'),
+                          nullable=False)
+
+
+class PaymentTruck(db.Model):
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
+                           nullable=False)
+    cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
+                           nullable=False)
+    charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('truckcharge.id'),
+                          nullable=False)
+
+
+class PaymentTaxi(db.Model):
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
+                           nullable=False)
+    cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
+                           nullable=False)
+    charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('taxicharge.id'),
+                          nullable=False)
+
+
+class PaymentCoaster(db.Model):
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
+                           nullable=False)
+    cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
+                           nullable=False)
+    charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('coastercharge.id'),
+                          nullable=False)
+
+
+class PaymentBodaboda(db.Model):
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
+                           nullable=False)
+    cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
+                           nullable=False)
+    charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('bodacharge.id'),
+                          nullable=False)
