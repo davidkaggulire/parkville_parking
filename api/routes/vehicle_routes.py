@@ -1,7 +1,7 @@
 from api import api
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
-from ..models import Charge, Vehicle
+from ..models import Vehicle
 from ..serializers.vehicle_serializer import response_serializer
 
 from schemas.carschema import CreateSchema
@@ -58,23 +58,9 @@ class VehicleList(Resource):
                 return make_response(jsonify({"error": hello}), 400)
 
             nin_number = data["nin_number"]
-            duration_type = data["duration_type"]
 
-            charge_value = data["charge_value"]
             vehicle_type = data["vehicle_type"]
-
-            vehicle = Charge.query.filter_by(id=vehicle_type).first_or_404(description='Record with id={} is not available'.format(vehicle_type))
-
-            print(vehicle.night_charge)
-
-            if duration_type == "day":
-                charge_value = vehicle.day_charge
-            elif duration_type == "night":
-                charge_value = vehicle.night_charge
-            elif duration_type == "less than 3 hours":
-                charge_value = vehicle.hour_charge
-
-            print(charge_value)
+            gender = data["gender"]
 
             new_dict = {
                 "driver_name": driver_name,
@@ -83,9 +69,8 @@ class VehicleList(Resource):
                 "model": model,
                 "phone_number": phone_number,
                 "nin_number": nin_number,
-                "duration_type": duration_type,
-                "charge_value": charge_value,
-                "charge_id": vehicle_type,
+                "cartype_id": vehicle_type,
+                'gender': gender
             }
 
             new_data = Vehicle(**new_dict)
@@ -95,29 +80,10 @@ class VehicleList(Resource):
             db.session.commit()
             print(data)
 
-            output = {
-                "driver_name": driver_name,
-                "number_plate": number_plate,
-                "color": color,
-                "model": model,
-                "phone_number": phone_number,
-                "nin_number": nin_number,
-                "duration_type": duration_type,
-                "charge_value": charge_value,
-                "vehicle_type": vehicle.vehicle_type,
-            }
-
-            message = {
-                "status": "success",
-                "message": "Vehicle registered successfully",
-                "vehicle": output
-            }
-            return make_response(jsonify(message), 201)
+            return Vehicle.serialize(new_data), 201
         except Exception as e:
             print(e)
             return jsonify()
-
-
 
 
 api.add_resource(VehicleList, "/vehicle")
