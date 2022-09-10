@@ -52,6 +52,13 @@ class TruckChargeList(Resource):
             return make_response(jsonify(error), 400)
 
 
+class TruckChargeRecord(Resource):
+    def get(self, charge_id):
+        return Truckcharge.serialize(
+            Truckcharge.query.filter_by(id=charge_id)
+            .first_or_404(description='Record with id={} is not available'.format(charge_id))), 200
+
+
 class CoasterChargeList(Resource):
     def get(self):
         # return "Hellow world", 200
@@ -87,6 +94,13 @@ class CoasterChargeList(Resource):
                 "error": str(e)
             }
             return make_response(jsonify(error), 400)
+
+
+class CoasterChargeRecord(Resource):
+    def get(self, charge_id):
+        return Coastercharge.serialize(
+            Coastercharge.query.filter_by(id=charge_id)
+            .first_or_404(description='Record with id={} is not available'.format(charge_id))), 200
 
 
 class CarChargeList(Resource):
@@ -125,6 +139,13 @@ class CarChargeList(Resource):
             return make_response(jsonify(error), 400)
 
 
+class CarChargeRecord(Resource):
+    def get(self, charge_id):
+        return Carcharge.serialize(
+            Carcharge.query.filter_by(id=charge_id)
+            .first_or_404(description='Record with id={} is not available'.format(charge_id))), 200
+
+
 class TaxiChargeList(Resource):
     def get(self):
         # return "Hellow world", 200
@@ -159,6 +180,13 @@ class TaxiChargeList(Resource):
                 "error": str(e)
             }
             return make_response(jsonify(error), 400)
+
+
+class TaxiChargeRecord(Resource):
+    def get(self, charge_id):
+        return Taxicharge.serialize(
+            Taxicharge.query.filter_by(id=charge_id)
+            .first_or_404(description='Record with id={} is not available'.format(charge_id))), 200
 
 
 class BodaChargeList(Resource):
@@ -197,8 +225,24 @@ class BodaChargeList(Resource):
             return make_response(jsonify(error), 400)
 
 
+class BodaChargeRecord(Resource):
+    def get(self, charge_id):
+        return Bodacharge.serialize(
+            Bodacharge.query.filter_by(id=charge_id)
+            .first_or_404(description='Record with id={} is not available'.format(charge_id))), 200
+
+
 api.add_resource(TruckChargeList, "/truckcharges")
+api.add_resource(TruckChargeRecord, "/truckcharges/<charge_id>")
+
 api.add_resource(CoasterChargeList, "/coastercharges")
+api.add_resource(CoasterChargeRecord, "/coastercharges/<charge_id>")
+
 api.add_resource(CarChargeList, "/carcharges")
+api.add_resource(CarChargeRecord, "/carcharges/<charge_id>")
+
 api.add_resource(TaxiChargeList, "/taxicharges")
+api.add_resource(TaxiChargeRecord, "/taxicharges/<charge_id>")
+
 api.add_resource(BodaChargeList, "/bodacharges")
+api.add_resource(BodaChargeRecord, "/bodacharges/<charge_id>")
