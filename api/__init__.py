@@ -29,6 +29,7 @@ migrate = Migrate(app, db)
 from api.routes import vehicle_routes
 from api.routes import charge_routes
 from api.routes import cartype_routes
+from api.routes import parking_routes
 
 
 
