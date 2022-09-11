@@ -99,6 +99,9 @@ class Vehicle(db.Model):
                            default=datetime.utcnow)
     gender = db.Column(db.Enum('male', 'female', 'other', name='varchar'))
     flag = db.Column(db.String(80), nullable=False, default="admitted")
+    parking = db.Column(db.Boolean, default=False, nullable=False)
+    battery = db.Column(db.Boolean, default=False, nullable=False)
+    clinic = db.Column(db.Boolean, default=False, nullable=False)
     cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
                            nullable=False)
     
@@ -129,8 +132,6 @@ class PaymentCar(db.Model):
                    primary_key=True, default=uuid.uuid4, unique=True)
     vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
                            nullable=False)
-    cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
-                           nullable=False)
     charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('carcharge.id'),
                           nullable=False)
 
@@ -139,8 +140,6 @@ class PaymentTruck(db.Model):
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
-                           nullable=False)
-    cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
                            nullable=False)
     charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('truckcharge.id'),
                           nullable=False)
@@ -151,8 +150,6 @@ class PaymentTaxi(db.Model):
                    primary_key=True, default=uuid.uuid4, unique=True)
     vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
                            nullable=False)
-    cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
-                           nullable=False)
     charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('taxicharge.id'),
                           nullable=False)
 
@@ -162,8 +159,6 @@ class PaymentCoaster(db.Model):
                    primary_key=True, default=uuid.uuid4, unique=True)
     vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
                            nullable=False)
-    cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
-                           nullable=False)
     charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('coastercharge.id'),
                           nullable=False)
 
@@ -172,8 +167,6 @@ class PaymentBodaboda(db.Model):
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
-                           nullable=False)
-    cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
                            nullable=False)
     charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('bodacharge.id'),
                           nullable=False)
