@@ -1,3 +1,4 @@
+import json
 from api import api, db
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
@@ -35,15 +36,20 @@ class CarPaymentList(Resource):
 
         PaymentSchema().validate(data)
         try:
+
+            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
+                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
+
+            if vehicle.parking == True:
+                return make_response(jsonify({"message": "Paid already"}), 400)
+
             new_data = PaymentCar(**data)
             db.session.add(new_data)
             db.session.commit()
             print(data)
 
             # update parking_flag to True - to know element updated.
-            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
-                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
-
+            
             vehicle.parking = True
             db.session.commit()
 
