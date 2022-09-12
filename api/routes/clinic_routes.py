@@ -1,95 +1,125 @@
 from api import api
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
+from api.serializers.clinic_serializer import clinic_pay_serializer, clinic_pay_single_serializer, clinic_serializer
+from schemas.clinic_schema import CarTyreClinicSchema, ClinicPaymentSchema
+from ..models import Cartyreclinic, ClinicPayment, Vehicle
 
-from schemas.duration_schema import DurationSchema
-from ..models import Charge, Duration
-from ..serializers.vehicle_serializer import response_serializer
-
-from schemas.carschema import CreateSchema
 from decorators.decorators import required_params
 from api import db
 
-import json
-import phonenumbers
 
 BLANK = "'{}' cannot be blank"
 
 _parser = reqparse.RequestParser()
-_parser.add_argument('driver_name', type=str, help=BLANK.format("driver_name"))
-_parser.add_argument('number_plate', type=str,
-                     help=BLANK.format("number_plate"))
-_parser.add_argument('color', type=str, help=BLANK.format("color"))
-_parser.add_argument('model', type=str, help=BLANK.format("model"))
-_parser.add_argument('date', type=str, help=BLANK.format("date"))
-_parser.add_argument('phone_number', type=str,
-                     help=BLANK.format("phone_number"))
+_parser.add_argument('service', type=str,
+                     help=BLANK.format("service"))
+_parser.add_argument('fee', type=str,
+                     help=BLANK.format("fee"))
 
 
-class ClinicList(Resource):
+class ClinicServiceList(Resource):
     def get(self):
         # return "Hellow world", 200
-        persons = Duration.query.all()
-        response = response_serializer(persons)
+        services = Cartyreclinic.query.all()
+        response = clinic_serializer(services)
         return response, 200
         # return [PersonDetails.serialize(record) for record in records]
 
-    @required_params(DurationSchema())
+    @required_params(CarTyreClinicSchema())
     def post(self):
         args = _parser.parse_args()
         data = request.get_json()
 
-        DurationSchema().validate(data)
+        CarTyreClinicSchema().validate(data)
 
         print(data)
 
         try:
-            duration = data["duration"]
-            number_plate = data["number_plate"]
-            color = data["color"]
-            model = data["model"]
-            phone_number = data["phone_number"]
+            new_data = Cartyreclinic(**data)
 
-            nin_number = data["nin_number"]
-            duration_type = data["duration_type"]
-
-            charge_value = data["charge_value"]
-            vehicle_type = data["vehicle_type"]
-            gender = data["gender"]
-
-            if duration_type == "day":
-                charge_value = vehicle.day_charge
-            elif duration_type == "night":
-                charge_value = vehicle.night_charge
-            elif duration_type == "less than 3 hours":
-                charge_value = vehicle.hour_charge
-
-            print(charge_value)
-
-            new_dict = {
-                "driver_name": driver_name,
-                "number_plate": number_plate,
-                "color": color,
-                "model": model,
-                "phone_number": phone_number,
-                "nin_number": nin_number,
-                "duration_type": duration_type,
-                "charge_value": charge_value,
-                "charge_id": vehicle_type,
-                'gender': gender
-            }
-
-            new_data = Vehicle(**new_dict)
-
-            # new_data = Vehicle(**data)
             db.session.add(new_data)
             db.session.commit()
             print(data)
 
-            return Vehicle.serialize(new_data), 201
+            return Cartyreclinic.serialize(new_data), 201
         except Exception as e:
             print(e)
-            return jsonify()
+            error = {
+                "status": "error",
+                "error": str(e)
+            }
+            return make_response(jsonify(error), 400)
 
 
-api.add_resource(DurationList, "/duration")
+class ClinicServiceRecord(Resource):
+    def get(self, service_id):
+        return Cartyreclinic.serialize(
+            Cartyreclinic.query.filter_by(id=service_id)
+            .first_or_404(description='Record with id={} is not available'.format(service_id))), 200
+
+
+class ClinicPaymentList(Resource):
+    def get(self):
+        services = ClinicPayment.query.all()
+        response = clinic_pay_serializer(services)
+        return response, 200
+
+    @required_params(ClinicPaymentSchema())
+    def post(self):
+        # args = _parser.parse_args()
+        data = request.get_json()
+
+        vehicle_id = data["vehicle_id"]
+        service_id = data["service_id"]
+
+        ClinicPaymentSchema().validate(data)
+
+        print(data)
+
+        try:
+
+            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
+                .first_or_404(description='Vehicle with id={} is not available'.format(vehicle_id))
+            try: 
+                payment = ClinicPayment.query.filter_by(vehicle_id=vehicle_id, service_id=service_id)\
+                    .first_or_404(description='Service with id={} and Vehicle with id={} is not available'.format(service_id, vehicle_id))
+                print(f"{payment} exists")
+                # if paid, return paid already otherwise convert vehicle.clinic = true
+                if  payment:
+                    return make_response(jsonify({"message": "Clinic service paid for already"}), 400)
+            except Exception as e:
+                new_data = ClinicPayment(**data)
+                db.session.add(new_data)
+                db.session.commit()
+
+                vehicle.clinic = True
+                db.session.commit()
+                print(data)
+
+                payment =  ClinicPayment.serialize(new_data)
+                print(payment)
+                response = clinic_pay_single_serializer(payment)
+
+                return response, 201
+        except Exception as e:
+            print(e)
+            error = {
+                "status": "error",
+                "error": str(e)
+            }
+            return make_response(jsonify(error), 400)
+
+
+class ClinicPaymentRecord(Resource):
+    def get(self, payment_id):
+        return ClinicPayment.serialize(
+            ClinicPayment.query.filter_by(id=payment_id)
+            .first_or_404(description='Record with id={} is not available'.format(payment_id))), 200
+
+
+api.add_resource(ClinicServiceList, "/cartyreservices")
+api.add_resource(ClinicServiceRecord, "/cartyreservices/<service_id>")
+
+api.add_resource(ClinicPaymentList, "/clinicpayment")
+api.add_resource(ClinicPaymentRecord, "/clinicpayment/<payment_id>")
