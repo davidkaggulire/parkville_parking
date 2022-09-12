@@ -93,13 +93,16 @@ class CoasterPaymentList(Resource):
         PaymentSchema().validate(data)
 
         try:
+            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
+                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
+
+            if vehicle.parking == True:
+                return make_response(jsonify({"message": "Paid already"}), 400)
+
             new_data = PaymentCoaster(**data)
             db.session.add(new_data)
             db.session.commit()
             print(data)
-
-            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
-                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
 
             vehicle.parking = True
             db.session.commit()
@@ -145,13 +148,16 @@ class TruckPaymentList(Resource):
         PaymentSchema().validate(data)
 
         try:
+            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
+                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
+
+            if vehicle.parking == True:
+                return make_response(jsonify({"message": "Paid already"}), 400)
+
             new_data = PaymentTruck(**data)
             db.session.add(new_data)
             db.session.commit()
             print(data)
-
-            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
-                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
 
             vehicle.parking = True
             db.session.commit()
@@ -196,13 +202,16 @@ class TaxiPaymentList(Resource):
         PaymentSchema().validate(data)
 
         try:
+            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
+                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
+
+            if vehicle.parking == True:
+                return make_response(jsonify({"message": "Paid already"}), 400)
+
             new_data = PaymentTaxi(**data)
             db.session.add(new_data)
             db.session.commit()
             print(data)
-
-            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
-                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
 
             vehicle.parking = True
             db.session.commit()
@@ -247,13 +256,16 @@ class BodaPaymentList(Resource):
         PaymentSchema().validate(data)
 
         try:
+            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
+                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
+
+            if vehicle.parking == True:
+                return make_response(jsonify({"message": "Paid already"}), 400)
+
             new_data = Bodacharge(**data)
             db.session.add(new_data)
             db.session.commit()
             print(data)
-
-            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
-                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
 
             vehicle.parking = True
             db.session.commit()
