@@ -80,7 +80,8 @@ class VehicleList(Resource):
                     "phone_number": phone_number,
                     "nin_number": nin_number,
                     "cartype_id": car_type,
-                    'gender': gender
+                    'gender': gender,
+                    'flag': "admitted"
                 }
 
                 new_data = Vehicle(**new_dict)
