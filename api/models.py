@@ -104,7 +104,10 @@ class Vehicle(db.Model):
     clinic = db.Column(db.Boolean, default=False, nullable=False)
     cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
                            nullable=False)
-    
+    clinicpayment = db.relationship(
+        'ClinicPayment', backref='vehicle', lazy=True)
+    batterypayment = db.relationship(
+        'BatteryPayment', backref='vehicle', lazy=True)
 
     def __repr__(self) -> str:
         return self.driver_name
@@ -123,7 +126,10 @@ class Vehicle(db.Model):
             'nin_number': self.nin_number,
             'created_at': str(self.created_at),
             'gender': self.gender,
-            'car_type': car_type.type
+            'car_type': car_type.type,
+            'battery': self.battery,
+            'parking': self.parking,
+            'clinic': self.clinic
         }
 
 
@@ -170,3 +176,67 @@ class PaymentBodaboda(db.Model):
                            nullable=False)
     charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('bodacharge.id'),
                           nullable=False)
+
+
+class Cartyreclinic(db.Model):
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    service = db.Column(db.String(120), unique=True, nullable=False)
+    fee = db.Column(db.String(80), nullable=False)
+    clinicpayment = db.relationship(
+        'ClinicPayment', backref='car_tyre_clinic', lazy=True)
+
+    def serialize(self):
+        return {
+            'id': str(self.id),
+            'service': self.service,
+            'fee': self.fee,
+        }
+
+
+class ClinicPayment(db.Model):
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    service_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartyreclinic.id'),
+                           nullable=False)
+    vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
+                           nullable=False)
+
+    def serialize(self):
+        return {
+            'id': str(self.id),
+            'service_id': str(self.service_id),
+            'vehicle_id': str(self.vehicle_id),
+        }
+
+
+class Batterysection(db.Model):
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    battery_size = db.Column(db.String(120), unique=True, nullable=False)
+    batterypayment = db.relationship(
+        'BatteryPayment', backref='batterysection', lazy=True)
+
+    def serialize(self):
+        return {
+            'id': str(self.id),
+            'battery_size': self.battery_size,
+        }
+
+
+class BatteryPayment(db.Model):
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    battery_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('batterysection.id'),
+                           nullable=False)
+    vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
+                           nullable=False)
+    fee = db.Column(db.String(80), nullable=False)
+
+    def serialize(self):
+        return {
+            'id': str(self.id),
+            'battery_id': str(self.battery_id),
+            'vehicle_id': str(self.vehicle_id),
+            'fee': self.fee
+        }
