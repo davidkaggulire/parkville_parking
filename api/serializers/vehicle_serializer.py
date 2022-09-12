@@ -21,7 +21,8 @@ def response_serializer(vehicles: Vehicle):
             "car_type": car_type.type,
             "battery": vehicle.battery,
             "parking": vehicle.parking,
-            "clinic": vehicle.clinic
+            "clinic": vehicle.clinic,
+            "flag": vehicle.flag
         }
 
         response.append(vehicle_dict)
