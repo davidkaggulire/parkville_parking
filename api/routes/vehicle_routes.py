@@ -4,7 +4,7 @@ from flask import jsonify, request, make_response
 from ..models import Vehicle
 from ..serializers.vehicle_serializer import response_serializer
 
-from schemas.carschema import CreateSchema
+from schemas.carschema import CreateSchema, SignoutSchema
 from decorators.decorators import required_params
 from api import db
 
@@ -108,5 +108,45 @@ class VehicleRetrieve(Resource):
                 .first_or_404(description='Record with id={} is not available'.format(vehicle_id))), 200
 
 
+class SignOutVehicle(Resource):
+    def get(self):
+        vehicles = Vehicle.query.filter_by(flag="signed out")
+        response = response_serializer(vehicles)
+        return response, 200
+
+
+    @required_params(SignoutSchema())
+    def post(self):
+        data = request.get_json()
+
+        SignoutSchema().validate(data)
+
+        print(data)
+
+        vehicle_id = data["vehicle_id"]
+
+        try:
+            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
+                .first_or_404(description='Vehicle with id={} is not available'.format(vehicle_id))
+
+            if vehicle.flag == "admitted":
+                vehicle.flag = "signed out"
+                db.session.commit()
+
+                return make_response(jsonify({"message": "Vehicle signed out successfully"}), 200)
+            else: 
+                return make_response(jsonify({"message": "Vehicle signedout already"}), 400)
+
+        except Exception as e:
+            print(e)
+            error = {
+                "status": "error",
+                "error": str(e)
+            }
+            return make_response(jsonify(error), 400)
+
+
 api.add_resource(VehicleList, "/vehicle")
 api.add_resource(VehicleRetrieve, '/vehicle/<vehicle_id>')
+
+api.add_resource(SignOutVehicle, '/vehicle/signout')
