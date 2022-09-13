@@ -30,7 +30,7 @@ from api.routes import vehicle_routes
 from api.routes import charge_routes
 from api.routes import cartype_routes
 from api.routes import parking_routes
-from api.routes import clinic_routes, battery_routes
+from api.routes import clinic_routes, battery_routes, admin_routes
 
 
 
