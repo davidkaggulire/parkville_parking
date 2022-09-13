@@ -32,7 +32,7 @@ def clinic_pay_serializer(payments: ClinicPayment):
 
         vehicle = Vehicle.query.filter_by(id=payment.vehicle_id).first_or_404(
             description='Record with id={} is not available'.format(payment.vehicle_id))
-        
+
         payment_dict = {
             'id': str(payment.id),
             "service_id": str(payment.service_id),
@@ -40,7 +40,9 @@ def clinic_pay_serializer(payments: ClinicPayment):
             'service': car_tyre_clinic.service,
             'fee': car_tyre_clinic.fee,
             'number_plate': vehicle.number_plate,
-            'driver_name': vehicle.driver_name
+            'driver_name': vehicle.driver_name,
+            "paid_at": str(payment.paid_at),
+            "paid_date": str(payment.paid_date)
         }
 
         response.append(payment_dict)
@@ -53,6 +55,7 @@ def clinic_pay_serializer(payments: ClinicPayment):
 
     return final_output
 
+
 def clinic_pay_single_serializer(payment):
 
     car_tyre_clinic = Cartyreclinic.query.filter_by(id=payment["service_id"]).first_or_404(
@@ -60,7 +63,7 @@ def clinic_pay_single_serializer(payment):
 
     vehicle = Vehicle.query.filter_by(id=payment["vehicle_id"]).first_or_404(
         description='Vehicle with id={} is not available'.format(payment["vehicle_id"]))
-    
+
     payment_dict = {
         'id': str(payment["id"]),
         "service_id": str(payment["service_id"]),
@@ -68,9 +71,10 @@ def clinic_pay_single_serializer(payment):
         'service': car_tyre_clinic.service,
         'fee': car_tyre_clinic.fee,
         'number_plate': vehicle.number_plate,
-        'driver_name': vehicle.driver_name
+        'driver_name': vehicle.driver_name,
+        "paid_at": str(payment["paid_at"]),
+        "paid_date": str(payment["paid_date"])
     }
-
 
     final_output = {
         "status": "success",
