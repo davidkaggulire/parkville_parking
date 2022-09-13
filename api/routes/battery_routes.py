@@ -2,9 +2,9 @@ from api import api
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
 from api.serializers.battery_serializer import battery_list_payment_serializer, battery_section_list_serializer, battery_single_payment_serializer
-from api.serializers.clinic_serializer import clinic_pay_serializer, clinic_pay_single_serializer, clinic_serializer
+
 from schemas.battery_schema import BatteryPaymentSchema, BatterySectionSchema
-from ..models import BatteryPayment, Batterysection, Cartyreclinic, ClinicPayment, Vehicle
+from ..models import BatteryPayment, Batterysection, Vehicle
 
 from decorators.decorators import required_params
 from api import db
@@ -81,12 +81,12 @@ class BatteryPaymentList(Resource):
 
             vehicle = Vehicle.query.filter_by(id=vehicle_id)\
                 .first_or_404(description='Vehicle with id={} is not available'.format(vehicle_id))
-            try: 
+            try:
                 payment = BatteryPayment.query.filter_by(vehicle_id=vehicle_id, battery_id=battery_id)\
                     .first_or_404(description='Service with id={} and Vehicle with id={} is not available'.format(battery_id, vehicle_id))
                 print(f"{payment} exists")
                 # if paid, return paid already otherwise convert vehicle.clinic = true
-                if  payment:
+                if payment:
                     return make_response(jsonify({"message": "Battery size paid for already"}), 400)
             except Exception as e:
                 new_data = BatteryPayment(**data)
@@ -97,7 +97,7 @@ class BatteryPaymentList(Resource):
                 db.session.commit()
                 print(data)
 
-                payment =  BatteryPayment.serialize(new_data)
+                payment = BatteryPayment.serialize(new_data)
                 print(payment)
                 response = battery_single_payment_serializer(payment)
 
