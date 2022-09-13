@@ -100,7 +100,6 @@ class ClinicPaymentList(Resource):
                 payment =  ClinicPayment.serialize(new_data)
                 print(payment)
                 response = clinic_pay_single_serializer(payment)
-
                 return response, 201
         except Exception as e:
             print(e)
