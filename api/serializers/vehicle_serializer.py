@@ -17,6 +17,8 @@ def response_serializer(vehicles: Vehicle):
             "phone_number": vehicle.phone_number,
             "nin_number": vehicle.nin_number,
             "created_at": str(vehicle.created_at),
+            "signed_out_at": str(vehicle.signed_out_at),
+            "signed_out_date": str(vehicle.signed_out_date),
             "gender": vehicle.gender,
             "car_type": car_type.type,
             "battery": vehicle.battery,
