@@ -97,6 +97,8 @@ class Vehicle(db.Model):
     nin_number = db.Column(db.String(80), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False,
                            default=datetime.utcnow)
+    signed_out_at = db.Column(db.DateTime, nullable=True)
+    signed_out_date = db.Column(db.Date, nullable=True)
     gender = db.Column(db.Enum('male', 'female', 'other', name='varchar'))
     flag = db.Column(db.String(80), nullable=False, default="admitted")
     parking = db.Column(db.Boolean, default=False, nullable=False)
@@ -125,6 +127,8 @@ class Vehicle(db.Model):
             'phone_number': self.phone_number,
             'nin_number': self.nin_number,
             'created_at': str(self.created_at),
+            'signed_out_at': str(self.signed_out_at),
+            'signed_out_date': str(self.signed_out_date),
             'gender': self.gender,
             'car_type': car_type.type,
             'battery': self.battery,
@@ -140,6 +144,10 @@ class PaymentCar(db.Model):
                            nullable=False)
     charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('carcharge.id'),
                           nullable=False)
+    paid_at = db.Column(db.DateTime, nullable=False,
+                        default=datetime.utcnow)
+    paid_date = db.Column(db.Date, nullable=False,
+                          default=datetime.now)
 
 
 class PaymentTruck(db.Model):
@@ -149,6 +157,10 @@ class PaymentTruck(db.Model):
                            nullable=False)
     charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('truckcharge.id'),
                           nullable=False)
+    paid_at = db.Column(db.DateTime, nullable=False,
+                        default=datetime.utcnow)
+    paid_date = db.Column(db.Date, nullable=False,
+                          default=datetime.now)
 
 
 class PaymentTaxi(db.Model):
@@ -158,6 +170,10 @@ class PaymentTaxi(db.Model):
                            nullable=False)
     charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('taxicharge.id'),
                           nullable=False)
+    paid_at = db.Column(db.DateTime, nullable=False,
+                        default=datetime.utcnow)
+    paid_date = db.Column(db.Date, nullable=False,
+                          default=datetime.now)
 
 
 class PaymentCoaster(db.Model):
@@ -167,6 +183,10 @@ class PaymentCoaster(db.Model):
                            nullable=False)
     charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('coastercharge.id'),
                           nullable=False)
+    paid_at = db.Column(db.DateTime, nullable=False,
+                        default=datetime.utcnow)
+    paid_date = db.Column(db.Date, nullable=False,
+                          default=datetime.now)
 
 
 class PaymentBodaboda(db.Model):
@@ -176,6 +196,10 @@ class PaymentBodaboda(db.Model):
                            nullable=False)
     charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('bodacharge.id'),
                           nullable=False)
+    paid_at = db.Column(db.DateTime, nullable=False,
+                        default=datetime.utcnow)
+    paid_date = db.Column(db.Date, nullable=False,
+                          default=datetime.now)
 
 
 class Cartyreclinic(db.Model):
@@ -201,12 +225,18 @@ class ClinicPayment(db.Model):
                            nullable=False)
     vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
                            nullable=False)
+    paid_at = db.Column(db.DateTime, nullable=False,
+                        default=datetime.utcnow)
+    paid_date = db.Column(db.Date, nullable=False,
+                          default=datetime.now)
 
     def serialize(self):
         return {
             'id': str(self.id),
             'service_id': str(self.service_id),
             'vehicle_id': str(self.vehicle_id),
+            'paid_at': str(self.paid_at),
+            'paid_date': str(self.paid_date)
         }
 
 
@@ -233,10 +263,17 @@ class BatteryPayment(db.Model):
                            nullable=False)
     fee = db.Column(db.String(80), nullable=False)
 
+    paid_at = db.Column(db.DateTime, nullable=False,
+                        default=datetime.utcnow)
+    paid_date = db.Column(db.Date, nullable=False,
+                          default=datetime.now)
+
     def serialize(self):
         return {
             'id': str(self.id),
             'battery_id': str(self.battery_id),
             'vehicle_id': str(self.vehicle_id),
-            'fee': self.fee
+            'fee': self.fee,
+            'paid_at': str(self.paid_at),
+            'paid_date': str(self.paid_date)
         }
