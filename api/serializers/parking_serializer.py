@@ -10,6 +10,8 @@ def car_parking_serializer(payments: PaymentCar):
             "id": str(payment.id),
             "vehicle_id": payment.vehicle_id,
             "charge_id": payment.charge_id,
+            "paid_at": str(payment.paid_at),
+            "paid_date": str(payment.paid_date)
         }
 
         response.append(payment_dict)
@@ -32,6 +34,8 @@ def coaster_parking_serializer(payments: PaymentCoaster):
             "id": str(payment.id),
             "vehicle_id": payment.vehicle_id,
             "charge_id": payment.charge_id,
+            "paid_at": str(payment.paid_at),
+            "paid_date": str(payment.paid_date)
         }
 
         response.append(payment_dict)
@@ -54,6 +58,8 @@ def truck_parking_serializer(payments: PaymentTruck):
             "id": str(payment.id),
             "vehicle_id": payment.vehicle_id,
             "charge_id": payment.charge_id,
+            "paid_at": str(payment.paid_at),
+            "paid_date": str(payment.paid_date)
         }
 
         response.append(payment_dict)
@@ -76,6 +82,8 @@ def taxi_parking_serializer(payments: PaymentTaxi):
             "id": str(payment.id),
             "vehicle_id": payment.vehicle_id,
             "charge_id": payment.charge_id,
+            "paid_at": str(payment.paid_at),
+            "paid_date": str(payment.paid_date)
         }
 
         response.append(payment_dict)
@@ -98,6 +106,8 @@ def boda_parking_serializer(payments: PaymentBodaboda):
             "id": str(payment.id),
             "vehicle_id": payment.vehicle_id,
             "charge_id": payment.charge_id,
+            "paid_at": str(payment.paid_at),
+            "paid_date": str(payment.paid_date)
         }
 
         response.append(payment_dict)
