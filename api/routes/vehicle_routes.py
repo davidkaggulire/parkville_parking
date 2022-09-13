@@ -10,6 +10,7 @@ from api import db
 
 import json
 import phonenumbers
+import datetime
 
 BLANK = "'{}' cannot be blank"
 
@@ -131,6 +132,8 @@ class SignOutVehicle(Resource):
 
             if vehicle.flag == "admitted":
                 vehicle.flag = "signed out"
+                vehicle.signed_out_at = datetime.datetime.now()
+                vehicle.signed_out_date = datetime.datetime.now()
                 db.session.commit()
 
                 return make_response(jsonify({"message": "Vehicle signed out successfully"}), 200)
