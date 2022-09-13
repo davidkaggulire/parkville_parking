@@ -39,7 +39,9 @@ def battery_list_payment_serializer(payments: BatteryPayment):
             'battery_size': battery_section.battery_size,
             'fee': payment.fee,
             'number_plate': vehicle.number_plate,
-            'driver_name': vehicle.driver_name
+            'driver_name': vehicle.driver_name,
+            "paid_at": str(payment.paid_at),
+            "paid_date": str(payment.paid_date)
         }
 
         response.append(payment_dict)
@@ -68,7 +70,9 @@ def battery_single_payment_serializer(payment):
         'battery_size': battery.battery_size,
         'fee': payment["fee"],
         'number_plate': vehicle.number_plate,
-        'driver_name': vehicle.driver_name
+        'driver_name': vehicle.driver_name,
+        "paid_at": str(payment['paid_at']),
+        "paid_date": str(payment['paid_date'])
     }
 
     final_output = {
