@@ -2,10 +2,13 @@
 
 from enum import unique
 from api import db
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import sqlalchemy.dialects.postgresql as postgresql
 import uuid
+from api import bcrypt
+import jwt
+import os
 
 
 class Cartype(db.Model):
@@ -277,3 +280,66 @@ class BatteryPayment(db.Model):
             'paid_at': str(self.paid_at),
             'paid_date': str(self.paid_date)
         }
+
+
+class User(db.Model):
+    """ User Model for storing user related details """
+    __tablename__ = "users"
+
+    id = db.Column(postgresql.UUID(as_uuid=True),
+                   primary_key=True, default=uuid.uuid4, unique=True)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    registered_on = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow)
+    admin = db.Column(db.Boolean, nullable=False, default=False)
+
+    def __init__(self, email, password, admin=False):
+        self.email = email
+        # password = password.encode('utf-8')
+        # print(password)
+        self.password = bcrypt.generate_password_hash(
+            password
+        ).decode('utf-8')
+
+        self.registered_on = datetime.now()
+        self.admin = admin
+
+    def encode_auth_token(self, user_id):
+        """
+        Generates the Auth Token
+        :return: string
+        """
+        try:
+            payload = {
+                'exp': datetime.now() + timedelta(days=0, seconds=5),
+                'iat': datetime.now(),
+                'sub': str(user_id)
+            }
+            return jwt.encode(
+                payload,
+                # app.config.get('SECRET_KEY'),
+                os.environ['SECRET_KEY'],
+                algorithm='HS256'
+            )
+        except Exception as e:
+            return e
+
+    @staticmethod
+    def decode_auth_token(auth_token):
+        """
+        Decodes the auth token
+        :param auth_token:
+        :return: integer|string
+        """
+        try:
+            print("hello men")
+            print(os.environ['SECRET_KEY'])
+            print("are we together")
+            payload = jwt.decode(auth_token, os.environ['SECRET_KEY'], algorithms=["HS256"])
+            print(payload['sub'])
+            return payload['sub']
+        except jwt.ExpiredSignatureError:
+            return 'Signature expired. Please log in again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Please log in again.'
