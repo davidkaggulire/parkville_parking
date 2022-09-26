@@ -1,15 +1,12 @@
 from api import api
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
-from api.serializers.battery_serializer import battery_section_list_serializer
 from api.serializers.vehicle_serializer import response_serializer
 
 from schemas.admin_schema import SignedoutSchema
-from schemas.battery_schema import BatterySectionSchema
-from ..models import  Batterysection, Vehicle
+from ..models import Vehicle
 
 from decorators.decorators import required_params
-from api import db
 
 
 BLANK = "'{}' cannot be blank"
