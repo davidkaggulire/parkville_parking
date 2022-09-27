@@ -1,6 +1,5 @@
 # models
 
-from enum import unique
 from api import db
 from datetime import datetime, timedelta
 
@@ -8,7 +7,8 @@ import sqlalchemy.dialects.postgresql as postgresql
 import uuid
 from api import bcrypt
 import jwt
-import os
+
+from api import app
 
 
 class Cartype(db.Model):
@@ -107,8 +107,8 @@ class Vehicle(db.Model):
     parking = db.Column(db.Boolean, default=False, nullable=False)
     battery = db.Column(db.Boolean, default=False, nullable=False)
     clinic = db.Column(db.Boolean, default=False, nullable=False)
-    cartype_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartype.id'),
-                           nullable=False)
+    cartype_id = db.Column(postgresql.UUID(as_uuid=True),
+                           db.ForeignKey('cartype.id'), nullable=False)
     clinicpayment = db.relationship(
         'ClinicPayment', backref='vehicle', lazy=True)
     batterypayment = db.relationship(
@@ -119,7 +119,8 @@ class Vehicle(db.Model):
 
     def serialize(self):
         car_type = Cartype.query.filter_by(id=self.cartype_id).first_or_404(
-            description='Record with id={} is not available'.format(self.cartype_id))
+            description='Record with id={} is not available'.format(
+                self.cartype_id))
 
         return {
             'id': str(self.id),
@@ -143,10 +144,10 @@ class Vehicle(db.Model):
 class PaymentCar(db.Model):
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
-    vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
-                           nullable=False)
-    charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('carcharge.id'),
-                          nullable=False)
+    vehicle_id = db.Column(postgresql.UUID(as_uuid=True),
+                           db.ForeignKey('vehicle.id'), nullable=False)
+    charge_id = db.Column(postgresql.UUID(as_uuid=True),
+                          db.ForeignKey('carcharge.id'), nullable=False)
     paid_at = db.Column(db.DateTime, nullable=False,
                         default=datetime.utcnow)
     paid_date = db.Column(db.Date, nullable=False,
@@ -156,10 +157,10 @@ class PaymentCar(db.Model):
 class PaymentTruck(db.Model):
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
-    vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
-                           nullable=False)
-    charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('truckcharge.id'),
-                          nullable=False)
+    vehicle_id = db.Column(postgresql.UUID(as_uuid=True),
+                           db.ForeignKey('vehicle.id'), nullable=False)
+    charge_id = db.Column(postgresql.UUID(as_uuid=True),
+                          db.ForeignKey('truckcharge.id'), nullable=False)
     paid_at = db.Column(db.DateTime, nullable=False,
                         default=datetime.utcnow)
     paid_date = db.Column(db.Date, nullable=False,
@@ -169,10 +170,10 @@ class PaymentTruck(db.Model):
 class PaymentTaxi(db.Model):
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
-    vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
-                           nullable=False)
-    charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('taxicharge.id'),
-                          nullable=False)
+    vehicle_id = db.Column(postgresql.UUID(as_uuid=True),
+                           db.ForeignKey('vehicle.id'), nullable=False)
+    charge_id = db.Column(postgresql.UUID(as_uuid=True),
+                          db.ForeignKey('taxicharge.id'), nullable=False)
     paid_at = db.Column(db.DateTime, nullable=False,
                         default=datetime.utcnow)
     paid_date = db.Column(db.Date, nullable=False,
@@ -182,10 +183,10 @@ class PaymentTaxi(db.Model):
 class PaymentCoaster(db.Model):
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
-    vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
-                           nullable=False)
-    charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('coastercharge.id'),
-                          nullable=False)
+    vehicle_id = db.Column(postgresql.UUID(as_uuid=True),
+                           db.ForeignKey('vehicle.id'), nullable=False)
+    charge_id = db.Column(postgresql.UUID(as_uuid=True),
+                          db.ForeignKey('coastercharge.id'), nullable=False)
     paid_at = db.Column(db.DateTime, nullable=False,
                         default=datetime.utcnow)
     paid_date = db.Column(db.Date, nullable=False,
@@ -195,10 +196,10 @@ class PaymentCoaster(db.Model):
 class PaymentBodaboda(db.Model):
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
-    vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
-                           nullable=False)
-    charge_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('bodacharge.id'),
-                          nullable=False)
+    vehicle_id = db.Column(postgresql.UUID(as_uuid=True),
+                           db.ForeignKey('vehicle.id'), nullable=False)
+    charge_id = db.Column(postgresql.UUID(as_uuid=True),
+                          db.ForeignKey('bodacharge.id'), nullable=False)
     paid_at = db.Column(db.DateTime, nullable=False,
                         default=datetime.utcnow)
     paid_date = db.Column(db.Date, nullable=False,
@@ -224,10 +225,10 @@ class Cartyreclinic(db.Model):
 class ClinicPayment(db.Model):
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
-    service_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('cartyreclinic.id'),
-                           nullable=False)
-    vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
-                           nullable=False)
+    service_id = db.Column(postgresql.UUID(as_uuid=True),
+                           db.ForeignKey('cartyreclinic.id'), nullable=False)
+    vehicle_id = db.Column(postgresql.UUID(as_uuid=True),
+                           db.ForeignKey('vehicle.id'), nullable=False)
     paid_at = db.Column(db.DateTime, nullable=False,
                         default=datetime.utcnow)
     paid_date = db.Column(db.Date, nullable=False,
@@ -260,10 +261,10 @@ class Batterysection(db.Model):
 class BatteryPayment(db.Model):
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
-    battery_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('batterysection.id'),
-                           nullable=False)
-    vehicle_id = db.Column(postgresql.UUID(as_uuid=True), db.ForeignKey('vehicle.id'),
-                           nullable=False)
+    battery_id = db.Column(postgresql.UUID(as_uuid=True),
+                           db.ForeignKey('batterysection.id'), nullable=False)
+    vehicle_id = db.Column(postgresql.UUID(as_uuid=True),
+                           db.ForeignKey('vehicle.id'), nullable=False)
     fee = db.Column(db.String(80), nullable=False)
 
     paid_at = db.Column(db.DateTime, nullable=False,
@@ -296,8 +297,6 @@ class User(db.Model):
 
     def __init__(self, email, password, admin=False):
         self.email = email
-        # password = password.encode('utf-8')
-        # print(password)
         self.password = bcrypt.generate_password_hash(
             password
         ).decode('utf-8')
@@ -318,8 +317,7 @@ class User(db.Model):
             }
             return jwt.encode(
                 payload,
-                # app.config.get('SECRET_KEY'),
-                os.environ['SECRET_KEY'],
+                app.config.get('SECRET_KEY'),
                 algorithm='HS256'
             )
         except Exception as e:
@@ -333,13 +331,42 @@ class User(db.Model):
         :return: integer|string
         """
         try:
-            print("hello men")
-            print(os.environ['SECRET_KEY'])
-            print("are we together")
-            payload = jwt.decode(auth_token, os.environ['SECRET_KEY'], algorithms=["HS256"])
-            print(payload['sub'])
-            return payload['sub']
+            payload = jwt.decode(auth_token, app.config["SECRET_KEY"],
+                                 algorithms=["HS256"])
+            is_blacklisted_token = BlacklistToken.check_blacklist(auth_token)
+            if is_blacklisted_token:
+                return 'Token blacklisted. Please log in again.'
+            else:
+                return payload['sub']
+
         except jwt.ExpiredSignatureError:
             return 'Signature expired. Please log in again.'
         except jwt.InvalidTokenError:
             return 'Invalid token. Please log in again.'
+
+
+class BlacklistToken(db.Model):
+    """
+    Token Model for storing JWT tokens
+    """
+    __tablename__ = 'blacklist_tokens'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    token = db.Column(db.String(500), unique=True, nullable=False)
+    blacklisted_on = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, token):
+        self.token = token
+        self.blacklisted_on = datetime.now()
+
+    def __repr__(self):
+        return '<id: token: {}'.format(self.token)
+
+    @staticmethod
+    def check_blacklist(auth_token):
+        # check whether auth token has been blacklisted
+        res = BlacklistToken.query.filter_by(token=str(auth_token)).first()
+        if res:
+            return True
+        else:
+            return False
