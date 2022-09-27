@@ -1,15 +1,11 @@
-from distutils.log import Log
 from api import api
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
 
-from schemas.admin_schema import SignedoutSchema
-from ..models import User
+from ..models import BlacklistToken, User
 
-from decorators.decorators import required_params
 from api import db
-import json
-from api import bcrypt
+from api import bcrypt, jwt
 
 
 BLANK = "'{}' cannot be blank"
@@ -33,12 +29,11 @@ class RegisterAPI(Resource):
         print(post_data.get('email'))
         print(post_data.get('password'))
 
-        password = post_data.get('password')
         # check if user already exists
 
         try:
             user = User.query.filter_by(email=post_data.get('email')).first()
-            
+
             if not user:
                 try:
                     user = User(
@@ -51,7 +46,7 @@ class RegisterAPI(Resource):
                     db.session.commit()
                     # generate the auth token
                     auth_token = user.encode_auth_token(user.id)
-                    
+
                     # print(auth_token)
                     responseObject = {
                         'status': 'success',
@@ -98,12 +93,14 @@ class LoginAPI(Resource):
             if user and bcrypt.check_password_hash(
                 user.password, post_data.get('password')
             ):
+                # access_token = create_access_token(identity=user.id)
                 auth_token = user.encode_auth_token(user.id)
                 if auth_token:
                     responseObject = {
                         'status': 'success',
                         'message': 'Successfully logged in.',
-                        'auth_token': auth_token
+                        'auth_token': auth_token,
+                        # 'jti': access_token
                     }
                     return make_response(jsonify(responseObject), 200)
             else:
@@ -125,6 +122,7 @@ class UserAPI(Resource):
     """
     User Resource
     """
+    # @token_required
     def get(self):
         # get the auth token
         auth_header = request.headers.get('Authorization')
@@ -136,6 +134,28 @@ class UserAPI(Resource):
             print(auth_token)
             resp = User.decode_auth_token(auth_token)
             print(resp)
+
+            if resp == "Token blacklisted. Please log in again.":
+                responseObject = {
+                    'status': 'error',
+                    'message': 'Token blacklisted. Please log in again.',
+                }
+                return make_response(jsonify(responseObject), 400)
+
+            if resp == "Signature expired. Please log in again.":
+                responseObject = {
+                    'status': 'error',
+                    'message': 'Signature expired. Please log in again.',
+                }
+                return make_response(jsonify(responseObject), 400)
+
+            if resp == "Invalid token. Please log in again.":
+                responseObject = {
+                    'status': 'error',
+                    'message': 'Invalid token. Please log in again.',
+                }
+                return make_response(jsonify(responseObject), 400)
+
             if isinstance(resp, str):
                 user = User.query.filter_by(id=resp).first()
                 responseObject = {
@@ -161,6 +181,73 @@ class UserAPI(Resource):
             return make_response(jsonify(responseObject), 401)
 
 
+class LogoutAPI(Resource):
+    """
+    Logout Resource
+    """
+    def post(self):
+        # get auth token
+        auth_header = request.headers.get('Authorization')
+        if auth_header:
+            auth_token = auth_header.split(" ")[1]
+        else:
+            auth_token = ''
+        if auth_token:
+            resp = User.decode_auth_token(auth_token)
+            if isinstance(resp, str):
+                # mark the token as blacklisted
+                is_blacklisted_token = BlacklistToken.check_blacklist(
+                                    auth_token)
+                if is_blacklisted_token:
+                    responseObject = {
+                        'status': 'success',
+                        'message': 'Token blacklisted already \
+                            Please log in again.'
+                    }
+                    return make_response(jsonify(responseObject), 200)
+                else:
+                    blacklist_token = BlacklistToken(token=auth_token)
+                    try:
+                        # insert the token
+                        db.session.add(blacklist_token)
+                        db.session.commit()
+                        responseObject = {
+                            'status': 'success',
+                            'message': 'Successfully logged out.'
+                        }
+                        return make_response(jsonify(responseObject), 200)
+                    except Exception as e:
+                        responseObject = {
+                            'status': 'fail',
+                            'message': e
+                        }
+                        return make_response(jsonify(responseObject), 200)
+            else:
+                responseObject = {
+                    'status': 'fail',
+                    'message': resp
+                }
+                return make_response(jsonify(responseObject), 401)
+        else:
+            responseObject = {
+                'status': 'fail',
+                'message': 'Provide a valid auth token.'
+            }
+            return make_response(jsonify(responseObject), 403)
+
+
+def check_blacklist(token):
+    BlacklistToken.check_blacklist(token)
+
+
+@jwt.token_in_blocklist_loader
+def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
+    jti = jwt_payload["jti"]
+    token_in_database = check_blacklist(jti)
+    return token_in_database is not None
+
+
 api.add_resource(RegisterAPI, "/auth/signup")
 api.add_resource(LoginAPI, "/auth/login")
 api.add_resource(UserAPI, "/auth/status")
+api.add_resource(LogoutAPI, "/auth/logout")
