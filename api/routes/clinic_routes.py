@@ -1,3 +1,4 @@
+from lib2to3.pgen2.tokenize import TokenError
 from api import api
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
@@ -5,8 +6,11 @@ from api.serializers.clinic_serializer import clinic_pay_serializer, clinic_pay_
 from schemas.clinic_schema import CarTyreClinicSchema, ClinicPaymentSchema
 from ..models import Cartyreclinic, ClinicPayment, Vehicle
 
-from decorators.decorators import required_params
+from decorators.decorators import required_params, token_required
 from api import db
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+
 
 
 BLANK = "'{}' cannot be blank"
@@ -19,8 +23,14 @@ _parser.add_argument('fee', type=str,
 
 
 class ClinicServiceList(Resource):
+    # method_decorators = {'get': [token_required]}
+    
+    @jwt_required()
+    @token_required
     def get(self):
-        # return "Hellow world", 200
+        current_identity = get_jwt_identity()
+        print("this is the current identity")
+        print(current_identity)
         services = Cartyreclinic.query.all()
         response = clinic_serializer(services)
         return response, 200
