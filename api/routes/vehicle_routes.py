@@ -35,7 +35,6 @@ class VehicleList(Resource):
 
     @required_params(CreateSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         CreateSchema().validate(data)
@@ -63,7 +62,8 @@ class VehicleList(Resource):
 
         try:
             user = Vehicle.query.filter_by(
-                driver_name=driver_name, number_plate=number_plate, flag="admitted").first_or_404()
+                driver_name=driver_name, number_plate=number_plate,
+                flag="admitted").first_or_404()
 
             if user:
                 message = {
@@ -71,7 +71,7 @@ class VehicleList(Resource):
                     "message": "Car admitted already"
                 }
                 return make_response(jsonify(message), 400)
-        except Exception as e:
+        except Exception:
             try:
                 new_dict = {
                     "driver_name": driver_name,
@@ -105,8 +105,9 @@ class VehicleList(Resource):
 class VehicleRetrieve(Resource):
     def get(self, vehicle_id):
         return Vehicle.serialize(
-            Vehicle.query.filter_by(id=vehicle_id)
-                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))), 200
+            Vehicle.query.filter_by(id=vehicle_id).first_or_404(
+                        description='Record with id={} is unavailable'.format(
+                            vehicle_id))), 200
 
 
 class SignOutVehicle(Resource):
@@ -114,7 +115,6 @@ class SignOutVehicle(Resource):
         vehicles = Vehicle.query.filter_by(flag="signed out")
         response = response_serializer(vehicles)
         return response, 200
-
 
     @required_params(SignoutSchema())
     def post(self):
@@ -127,18 +127,21 @@ class SignOutVehicle(Resource):
         vehicle_id = data["vehicle_id"]
 
         try:
-            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
-                .first_or_404(description='Vehicle with id={} is not available'.format(vehicle_id))
+            vehicle = Vehicle.query.filter_by(id=vehicle_id).first_or_404(
+                description='Vehicle with id={} is not available'.format(
+                    vehicle_id))
 
             if vehicle.flag == "admitted":
                 vehicle.flag = "signed out"
                 vehicle.signed_out_at = datetime.datetime.now()
                 vehicle.signed_out_date = datetime.datetime.now()
                 db.session.commit()
+                message = {"message": "Vehicle signed out successfully"}
 
-                return make_response(jsonify({"message": "Vehicle signed out successfully"}), 200)
-            else: 
-                return make_response(jsonify({"message": "Vehicle signedout already"}), 400)
+                return make_response(jsonify(message), 200)
+            else:
+                message = {"message": "Vehicle signedout already"}
+                return make_response(jsonify(message), 400)
 
         except Exception as e:
             print(e)
