@@ -1,7 +1,6 @@
 """charge_schema.py"""
 
 from marshmallow import Schema, fields, validate
-import string
 
 
 class BatterySectionSchema(Schema):
