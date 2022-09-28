@@ -1,15 +1,16 @@
-from api import api
+"""battery routes"""
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
+from flask_jwt_extended import jwt_required
+
+from decorators.decorators import required_params, token_required
 from api.serializers.battery_serializer import battery_list_payment_serializer
 from api.serializers.battery_serializer import battery_section_list_serializer
 from api.serializers.battery_serializer import battery_single_payment_serializer
 from schemas.battery_schema import BatteryPaymentSchema, BatterySectionSchema
-from ..models import BatteryPayment, Batterysection, Vehicle
-from flask_jwt_extended import jwt_required
-
-from decorators.decorators import required_params, token_required
+from api import api
 from api import db
+from ..models import BatteryPayment, Batterysection, Vehicle
 
 
 BLANK = "'{}' cannot be blank"
@@ -22,9 +23,11 @@ _parser.add_argument('fee', type=str,
 
 
 class BatterySectionList(Resource):
+    """battery section list"""
     @jwt_required()
     @token_required
     def get(self):
+        """get battery services"""
         services = Batterysection.query.all()
         response = battery_section_list_serializer(services)
         return response, 200
@@ -34,6 +37,7 @@ class BatterySectionList(Resource):
     @token_required
     @required_params(BatterySectionSchema())
     def post(self):
+        """post battery service"""
         data = request.get_json()
 
         BatterySectionSchema().validate(data)
@@ -58,19 +62,25 @@ class BatterySectionList(Resource):
 
 
 class BatterySectionRecord(Resource):
+    """battery section"""
+
     @jwt_required()
     @token_required
     def get(self, battery_id):
+        """serialize"""
         return Batterysection.serialize(
             Batterysection.query.filter_by(id=battery_id).first_or_404(
-                description='Record with id={} is not available'.format(
-                    battery_id))), 200
+                description=f'Record with id={battery_id} is \
+                    not available')), 200
 
 
 class BatteryPaymentList(Resource):
+    """list payments battery"""
+
     @jwt_required()
     @token_required
     def get(self):
+        """get all payments"""
         services = BatteryPayment.query.all()
         response = battery_list_payment_serializer(services)
         return response, 200
@@ -79,7 +89,7 @@ class BatteryPaymentList(Resource):
     @token_required
     @required_params(BatteryPaymentSchema())
     def post(self):
-        # args = _parser.parse_args()
+        """post battery payment"""
         data = request.get_json()
 
         vehicle_id = data["vehicle_id"]
@@ -92,14 +102,13 @@ class BatteryPaymentList(Resource):
         try:
 
             vehicle = Vehicle.query.filter_by(id=vehicle_id).first_or_404(
-                description='Vehicle with id={} is not available'.format(
-                    vehicle_id))
+                description=f'Vehicle with id={vehicle_id} is not available')
             try:
                 payment = BatteryPayment.query.filter_by(
                     vehicle_id=vehicle_id, battery_id=battery_id).first_or_404(
-                    description='Service with id={} and Vehicle with id={} \
-                        is not available'.format(
-                                battery_id, vehicle_id))
+                    description=f'Service with id={battery_id} \
+                        and Vehicle with id={vehicle_id} \
+                        is not available')
                 print(f"{payment} exists")
 
                 if payment:
@@ -129,13 +138,16 @@ class BatteryPaymentList(Resource):
 
 
 class BatteryPaymentRecord(Resource):
+    """battery payment record"""
+
     @jwt_required()
     @token_required
     def get(self, payment_id):
+        """return single battery payment"""
         return BatteryPayment.serialize(
             BatteryPayment.query.filter_by(id=payment_id).first_or_404(
-                description='Record with id={} is not available'.format(
-                    payment_id))), 200
+                description=f'Record with id={payment_id} is \
+                    not available')), 200
 
 
 api.add_resource(BatterySectionList, "/batteries")

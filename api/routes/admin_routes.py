@@ -1,12 +1,16 @@
-from api import api
+"""admin_routes"""
+
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
 from api.serializers.vehicle_serializer import response_serializer
 
 from schemas.admin_schema import SignedoutSchema
+from decorators.decorators import required_params
+
+from api import api
 from ..models import Vehicle
 
-from decorators.decorators import required_params
+
 
 
 BLANK = "'{}' cannot be blank"
@@ -19,9 +23,11 @@ _parser.add_argument('fee', type=str,
 
 
 class SignedoutVehicles(Resource):
+    """signed out vehicles"""
 
     @required_params(SignedoutSchema())
     def post(self):
+        """get signed out vehicles on specific date"""
         data = request.get_json()
 
         SignedoutSchema().validate(data)
