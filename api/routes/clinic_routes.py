@@ -1,8 +1,9 @@
-from lib2to3.pgen2.tokenize import TokenError
 from api import api
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
-from api.serializers.clinic_serializer import clinic_pay_serializer, clinic_pay_single_serializer, clinic_serializer
+from api.serializers.clinic_serializer import clinic_pay_serializer
+from api.serializers.clinic_serializer import clinic_serializer
+from api.serializers.clinic_serializer import clinic_pay_single_serializer
 from schemas.clinic_schema import CarTyreClinicSchema, ClinicPaymentSchema
 from ..models import Cartyreclinic, ClinicPayment, Vehicle
 
@@ -10,7 +11,6 @@ from decorators.decorators import required_params, token_required
 from api import db
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
-
 
 
 BLANK = "'{}' cannot be blank"
@@ -24,7 +24,7 @@ _parser.add_argument('fee', type=str,
 
 class ClinicServiceList(Resource):
     # method_decorators = {'get': [token_required]}
-    
+
     @jwt_required()
     @token_required
     def get(self):
@@ -38,7 +38,6 @@ class ClinicServiceList(Resource):
 
     @required_params(CarTyreClinicSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         CarTyreClinicSchema().validate(data)
@@ -65,8 +64,9 @@ class ClinicServiceList(Resource):
 class ClinicServiceRecord(Resource):
     def get(self, service_id):
         return Cartyreclinic.serialize(
-            Cartyreclinic.query.filter_by(id=service_id)
-            .first_or_404(description='Record with id={} is not available'.format(service_id))), 200
+            Cartyreclinic.query.filter_by(id=service_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    service_id))), 200
 
 
 class ClinicPaymentList(Resource):
@@ -89,16 +89,19 @@ class ClinicPaymentList(Resource):
 
         try:
 
-            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
-                .first_or_404(description='Vehicle with id={} is not available'.format(vehicle_id))
-            try: 
-                payment = ClinicPayment.query.filter_by(vehicle_id=vehicle_id, service_id=service_id)\
-                    .first_or_404(description='Service with id={} and Vehicle with id={} is not available'.format(service_id, vehicle_id))
+            vehicle = Vehicle.query.filter_by(id=vehicle_id).first_or_404(
+                description='Vehicle with id={} is not available'.format(
+                    vehicle_id))
+            try:
+                payment = ClinicPayment.query.filter_by(
+                    vehicle_id=vehicle_id, service_id=service_id).first_or_404(
+                    description='Service with id={} and Vehicle with id={} is \
+                        not available'.format(service_id, vehicle_id))
                 print(f"{payment} exists")
-                # if paid, return paid already otherwise convert vehicle.clinic = true
-                if  payment:
-                    return make_response(jsonify({"message": "Clinic service paid for already"}), 400)
-            except Exception as e:
+                if payment:
+                    message = {"message": "Clinic service paid for already"}
+                    return make_response(jsonify(message), 400)
+            except Exception:
                 new_data = ClinicPayment(**data)
                 db.session.add(new_data)
                 db.session.commit()
@@ -107,7 +110,7 @@ class ClinicPaymentList(Resource):
                 db.session.commit()
                 print(data)
 
-                payment =  ClinicPayment.serialize(new_data)
+                payment = ClinicPayment.serialize(new_data)
                 print(payment)
                 response = clinic_pay_single_serializer(payment)
                 return response, 201
@@ -123,8 +126,9 @@ class ClinicPaymentList(Resource):
 class ClinicPaymentRecord(Resource):
     def get(self, payment_id):
         return ClinicPayment.serialize(
-            ClinicPayment.query.filter_by(id=payment_id)
-            .first_or_404(description='Record with id={} is not available'.format(payment_id))), 200
+            ClinicPayment.query.filter_by(id=payment_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    payment_id))), 200
 
 
 api.add_resource(ClinicServiceList, "/cartyreservices")
