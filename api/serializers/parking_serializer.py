@@ -1,4 +1,5 @@
-from ..models import PaymentBodaboda, PaymentCar, PaymentCoaster, PaymentTaxi, PaymentTruck
+from ..models import PaymentBodaboda, PaymentCar, PaymentCoaster
+from ..models import PaymentTaxi, PaymentTruck
 
 
 def car_parking_serializer(payments: PaymentCar):
