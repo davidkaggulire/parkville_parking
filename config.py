@@ -1,13 +1,17 @@
-from dotenv import load_dotenv
+"""config.py"""
 
 import os
+from dotenv import load_dotenv
+
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 load_dotenv()
 
 
-class Config(object):
+class Config():
+    """main config"""
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
@@ -16,20 +20,24 @@ class Config(object):
 
 
 class ProductionConfig(Config):
+    """production config"""
     DEBUG = False
 
 
 class StagingConfig(Config):
+    """staging config"""
     DEVELOPMENT = True
     DEBUG = True
 
 
 class DevelopmentConfig(Config):
+    """development config"""
     DEVELOPMENT = True
     DEBUG = True
 
 
 class TestingConfig(Config):
+    """testing config"""
     TESTING = True
 
 
