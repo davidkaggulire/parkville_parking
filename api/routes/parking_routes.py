@@ -1,6 +1,7 @@
 from api import api, db
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
+from flask_jwt_extended import jwt_required
 
 from api.models import Bodacharge, PaymentBodaboda, PaymentCar, PaymentCoaster
 from api.models import PaymentTaxi, PaymentTruck, Vehicle
@@ -11,7 +12,7 @@ from api.serializers.parking_serializer import taxi_parking_serializer
 from api.serializers.parking_serializer import truck_parking_serializer
 from schemas.payment_schema import PaymentSchema
 
-from decorators.decorators import required_params
+from decorators.decorators import required_params, token_required
 
 BLANK = "'{}' cannot be blank"
 
@@ -23,6 +24,8 @@ _parser.add_argument('charge', type=str,
 
 
 class CarPaymentList(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         # return "Hellow world", 200
         payments = PaymentCar.query.all()
@@ -30,6 +33,8 @@ class CarPaymentList(Resource):
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
 
+    @jwt_required()
+    @token_required
     @required_params(PaymentSchema())
     def post(self):
         data = request.get_json()
@@ -70,6 +75,8 @@ class CarPaymentList(Resource):
 
 
 class CarPaymentRecord(Resource):
+    @jwt_required()
+    @token_required
     def get(self, payment_id):
         return PaymentCar.serialize(
             PaymentCar.query.filter_by(id=payment_id).first_or_404(
@@ -78,6 +85,8 @@ class CarPaymentRecord(Resource):
 
 
 class CoasterPaymentList(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         # return "Hellow world", 200
         payments = PaymentCoaster.query.all()
@@ -85,6 +94,8 @@ class CoasterPaymentList(Resource):
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
 
+    @jwt_required()
+    @token_required
     @required_params(PaymentSchema())
     def post(self):
         data = request.get_json()
@@ -126,6 +137,8 @@ class CoasterPaymentList(Resource):
 
 
 class CoasterPaymentRecord(Resource):
+    @jwt_required()
+    @token_required
     def get(self, payment_id):
         return PaymentCoaster.serialize(
             PaymentCoaster.query.filter_by(id=payment_id).first_or_404(
@@ -134,6 +147,8 @@ class CoasterPaymentRecord(Resource):
 
 
 class TruckPaymentList(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         # return "Hellow world", 200
         payments = PaymentTruck.query.all()
@@ -141,6 +156,8 @@ class TruckPaymentList(Resource):
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
 
+    @jwt_required()
+    @token_required
     @required_params(PaymentSchema())
     def post(self):
         data = request.get_json()
@@ -181,6 +198,8 @@ class TruckPaymentList(Resource):
 
 
 class TruckPaymentRecord(Resource):
+    @jwt_required()
+    @token_required
     def get(self, payment_id):
         return PaymentTruck.serialize(
             PaymentTruck.query.filter_by(id=payment_id).first_or_404(
@@ -189,6 +208,8 @@ class TruckPaymentRecord(Resource):
 
 
 class TaxiPaymentList(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         # return "Hellow world", 200
         payments = PaymentTaxi.query.all()
@@ -196,6 +217,8 @@ class TaxiPaymentList(Resource):
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
 
+    @jwt_required()
+    @token_required
     @required_params(PaymentSchema())
     def post(self):
         data = request.get_json()
@@ -236,6 +259,8 @@ class TaxiPaymentList(Resource):
 
 
 class TaxiPaymentRecord(Resource):
+    @jwt_required()
+    @token_required
     def get(self, payment_id):
         return PaymentTaxi.serialize(
             PaymentTaxi.query.filter_by(id=payment_id).first_or_404(
@@ -244,6 +269,8 @@ class TaxiPaymentRecord(Resource):
 
 
 class BodaPaymentList(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         # return "Hellow world", 200
         payments = PaymentBodaboda.query.all()
@@ -251,6 +278,8 @@ class BodaPaymentList(Resource):
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
 
+    @jwt_required()
+    @token_required
     @required_params(PaymentSchema())
     def post(self):
         data = request.get_json()
@@ -291,6 +320,8 @@ class BodaPaymentList(Resource):
 
 
 class BodaPaymentRecord(Resource):
+    @jwt_required()
+    @token_required
     def get(self, payment_id):
         return Bodacharge.serialize(
             Bodacharge.query.filter_by(id=payment_id).first_or_404(

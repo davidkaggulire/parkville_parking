@@ -1,11 +1,12 @@
 from api import api
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
+from flask_jwt_extended import jwt_required
 from ..models import Vehicle
 from ..serializers.vehicle_serializer import response_serializer
 
 from schemas.carschema import CreateSchema, SignoutSchema
-from decorators.decorators import required_params
+from decorators.decorators import required_params, token_required
 from api import db
 
 import json
@@ -26,6 +27,8 @@ _parser.add_argument('phone_number', type=str,
 
 
 class VehicleList(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         # return "Hellow world", 200
         persons = Vehicle.query.all()
@@ -33,6 +36,8 @@ class VehicleList(Resource):
         return response, 200
         # return [PersonDetails.serialize(record) for record in records]
 
+    @jwt_required()
+    @token_required
     @required_params(CreateSchema())
     def post(self):
         data = request.get_json()
@@ -103,6 +108,8 @@ class VehicleList(Resource):
 
 
 class VehicleRetrieve(Resource):
+    @jwt_required()
+    @token_required
     def get(self, vehicle_id):
         return Vehicle.serialize(
             Vehicle.query.filter_by(id=vehicle_id).first_or_404(
@@ -111,11 +118,15 @@ class VehicleRetrieve(Resource):
 
 
 class SignOutVehicle(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         vehicles = Vehicle.query.filter_by(flag="signed out")
         response = response_serializer(vehicles)
         return response, 200
 
+    @jwt_required()
+    @token_required
     @required_params(SignoutSchema())
     def post(self):
         data = request.get_json()

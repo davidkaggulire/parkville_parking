@@ -6,8 +6,9 @@ from api.serializers.battery_serializer import battery_section_list_serializer
 from api.serializers.battery_serializer import battery_single_payment_serializer
 from schemas.battery_schema import BatteryPaymentSchema, BatterySectionSchema
 from ..models import BatteryPayment, Batterysection, Vehicle
+from flask_jwt_extended import jwt_required
 
-from decorators.decorators import required_params
+from decorators.decorators import required_params, token_required
 from api import db
 
 
@@ -21,12 +22,16 @@ _parser.add_argument('fee', type=str,
 
 
 class BatterySectionList(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         services = Batterysection.query.all()
         response = battery_section_list_serializer(services)
         return response, 200
         # return [PersonDetails.serialize(record) for record in records]
 
+    @jwt_required()
+    @token_required
     @required_params(BatterySectionSchema())
     def post(self):
         data = request.get_json()
@@ -53,6 +58,8 @@ class BatterySectionList(Resource):
 
 
 class BatterySectionRecord(Resource):
+    @jwt_required()
+    @token_required
     def get(self, battery_id):
         return Batterysection.serialize(
             Batterysection.query.filter_by(id=battery_id).first_or_404(
@@ -61,11 +68,15 @@ class BatterySectionRecord(Resource):
 
 
 class BatteryPaymentList(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         services = BatteryPayment.query.all()
         response = battery_list_payment_serializer(services)
         return response, 200
 
+    @jwt_required()
+    @token_required
     @required_params(BatteryPaymentSchema())
     def post(self):
         # args = _parser.parse_args()
@@ -118,6 +129,8 @@ class BatteryPaymentList(Resource):
 
 
 class BatteryPaymentRecord(Resource):
+    @jwt_required()
+    @token_required
     def get(self, payment_id):
         return BatteryPayment.serialize(
             BatteryPayment.query.filter_by(id=payment_id).first_or_404(

@@ -1,6 +1,7 @@
 from api import api, db
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
+from flask_jwt_extended import jwt_required
 
 from api.models import Bodacharge, Carcharge, Coastercharge
 from api.models import Truckcharge, Taxicharge
@@ -8,7 +9,7 @@ from ..serializers.charge_serializer import boda_serializer, car_serializer
 from ..serializers.charge_serializer import taxi_serializer, truck_serializer
 from ..serializers.charge_serializer import coaster_serializer
 from schemas.charge_schema import ChargeSchema
-from decorators.decorators import required_params
+from decorators.decorators import required_params, token_required
 
 BLANK = "'{}' cannot be blank"
 
@@ -20,6 +21,8 @@ _parser.add_argument('charge', type=str,
 
 
 class TruckChargeList(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         # return "Hellow world", 200
         charges = Truckcharge.query.all()
@@ -27,6 +30,8 @@ class TruckChargeList(Resource):
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
 
+    @jwt_required()
+    @token_required
     @required_params(ChargeSchema())
     def post(self):
         data = request.get_json()
@@ -54,6 +59,8 @@ class TruckChargeList(Resource):
 
 
 class TruckChargeRecord(Resource):
+    @jwt_required()
+    @token_required
     def get(self, charge_id):
         return Truckcharge.serialize(
             Truckcharge.query.filter_by(id=charge_id).first_or_404(
@@ -62,6 +69,8 @@ class TruckChargeRecord(Resource):
 
 
 class CoasterChargeList(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         # return "Hellow world", 200
         charges = Coastercharge.query.all()
@@ -69,6 +78,8 @@ class CoasterChargeList(Resource):
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
 
+    @jwt_required()
+    @token_required
     @required_params(ChargeSchema())
     def post(self):
         data = request.get_json()
@@ -98,6 +109,8 @@ class CoasterChargeList(Resource):
 
 
 class CoasterChargeRecord(Resource):
+    @jwt_required()
+    @token_required
     def get(self, charge_id):
         return Coastercharge.serialize(
             Coastercharge.query.filter_by(id=charge_id).first_or_404(
@@ -106,6 +119,8 @@ class CoasterChargeRecord(Resource):
 
 
 class CarChargeList(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         # return "Hellow world", 200
         charges = Carcharge.query.all()
@@ -113,6 +128,8 @@ class CarChargeList(Resource):
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
 
+    @jwt_required()
+    @token_required
     @required_params(ChargeSchema())
     def post(self):
         data = request.get_json()
@@ -141,6 +158,8 @@ class CarChargeList(Resource):
 
 
 class CarChargeRecord(Resource):
+    @jwt_required()
+    @token_required
     def get(self, charge_id):
         return Carcharge.serialize(
             Carcharge.query.filter_by(id=charge_id).first_or_404(
@@ -149,6 +168,8 @@ class CarChargeRecord(Resource):
 
 
 class TaxiChargeList(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         # return "Hellow world", 200
         charges = Taxicharge.query.all()
@@ -156,6 +177,8 @@ class TaxiChargeList(Resource):
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
 
+    @jwt_required()
+    @token_required
     @required_params(ChargeSchema())
     def post(self):
         data = request.get_json()
@@ -184,6 +207,8 @@ class TaxiChargeList(Resource):
 
 
 class TaxiChargeRecord(Resource):
+    @jwt_required()
+    @token_required
     def get(self, charge_id):
         return Taxicharge.serialize(
             Taxicharge.query.filter_by(id=charge_id).first_or_404(
@@ -192,6 +217,8 @@ class TaxiChargeRecord(Resource):
 
 
 class BodaChargeList(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         # return "Hellow world", 200
         charges = Bodacharge.query.all()
@@ -199,6 +226,8 @@ class BodaChargeList(Resource):
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
 
+    @jwt_required()
+    @token_required
     @required_params(ChargeSchema())
     def post(self):
         data = request.get_json()
@@ -227,6 +256,8 @@ class BodaChargeList(Resource):
 
 
 class BodaChargeRecord(Resource):
+    @jwt_required()
+    @token_required
     def get(self, charge_id):
         return Bodacharge.serialize(
             Bodacharge.query.filter_by(id=charge_id).first_or_404(
