@@ -22,7 +22,6 @@ class SignedoutVehicles(Resource):
 
     @required_params(SignedoutSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         SignedoutSchema().validate(data)
