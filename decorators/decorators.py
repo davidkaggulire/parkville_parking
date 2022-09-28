@@ -1,12 +1,13 @@
 """decorators.py"""
 
-from marshmallow import ValidationError
 from functools import wraps
+from marshmallow import ValidationError
 from flask import jsonify, request, make_response
 from api.models import User
 
 
 def required_params(schema):
+    """required params decorator"""
     def decorator(fn):
 
         @wraps(fn)
@@ -26,6 +27,7 @@ def required_params(schema):
 
 
 def token_required(f):
+    """token_required decorator"""
     @wraps(f)
     def decorator(*args, **kwargs):
         token = None
