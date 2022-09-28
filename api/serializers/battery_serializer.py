@@ -26,11 +26,14 @@ def battery_list_payment_serializer(payments: BatteryPayment):
 
     for payment in payments:
 
-        battery_section = Batterysection.query.filter_by(id=payment.battery_id).first_or_404(
-            description='Record with id={} is not available'.format(payment.battery_id))
+        battery_section = Batterysection.query.filter_by(
+            id=payment.battery_id).first_or_404(
+            description='Record with id={} is not available'.format(
+                payment.battery_id))
 
         vehicle = Vehicle.query.filter_by(id=payment.vehicle_id).first_or_404(
-            description='Record with id={} is not available'.format(payment.vehicle_id))
+            description='Record with id={} is not available'.format(
+                payment.vehicle_id))
 
         payment_dict = {
             'id': str(payment.id),
@@ -57,11 +60,14 @@ def battery_list_payment_serializer(payments: BatteryPayment):
 
 def battery_single_payment_serializer(payment):
 
-    battery = Batterysection.query.filter_by(id=payment["battery_id"]).first_or_404(
-        description='Battery section with id={} is not available'.format(payment["battery_id"]))
+    battery = Batterysection.query.filter_by(
+        id=payment["battery_id"]).first_or_404(
+        description='Battery section with id={} is not available'.format(
+            payment["battery_id"]))
 
     vehicle = Vehicle.query.filter_by(id=payment["vehicle_id"]).first_or_404(
-        description='Vehicle with id={} is not available'.format(payment["vehicle_id"]))
+        description='Vehicle with id={} is not available'.format(
+            payment["vehicle_id"]))
 
     payment_dict = {
         'id': str(payment["id"]),
