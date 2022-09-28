@@ -1,4 +1,5 @@
-from ..models import Bodacharge, Carcharge, Coastercharge, Taxicharge, Truckcharge
+from ..models import Bodacharge, Carcharge, Coastercharge
+from ..models import Taxicharge, Truckcharge
 
 
 def truck_serializer(charges: Truckcharge):
