@@ -1,8 +1,11 @@
+"""parking_serializer.py"""
+
 from ..models import PaymentBodaboda, PaymentCar, PaymentCoaster
 from ..models import PaymentTaxi, PaymentTruck
 
 
 def car_parking_serializer(payments: PaymentCar):
+    """car payments serializer"""
     response = []
 
     for payment in payments:
@@ -27,6 +30,7 @@ def car_parking_serializer(payments: PaymentCar):
 
 
 def coaster_parking_serializer(payments: PaymentCoaster):
+    """coaster payments serializer"""
     response = []
 
     for payment in payments:
@@ -51,6 +55,7 @@ def coaster_parking_serializer(payments: PaymentCoaster):
 
 
 def truck_parking_serializer(payments: PaymentTruck):
+    """truck payments serializer"""
     response = []
 
     for payment in payments:
@@ -75,6 +80,7 @@ def truck_parking_serializer(payments: PaymentTruck):
 
 
 def taxi_parking_serializer(payments: PaymentTaxi):
+    """taxi payments serializer"""
     response = []
 
     for payment in payments:
@@ -99,6 +105,7 @@ def taxi_parking_serializer(payments: PaymentTaxi):
 
 
 def boda_parking_serializer(payments: PaymentBodaboda):
+    """boda payments serializer"""
     response = []
 
     for payment in payments:

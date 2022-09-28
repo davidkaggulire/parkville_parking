@@ -1,7 +1,10 @@
+"""clinic_serializer.py"""
+
 from api.models import Cartyreclinic, ClinicPayment, Vehicle
 
 
 def clinic_serializer(services: Cartyreclinic):
+    """clinic serializer"""
     response = []
 
     for service in services:
@@ -23,18 +26,19 @@ def clinic_serializer(services: Cartyreclinic):
 
 
 def clinic_pay_serializer(payments: ClinicPayment):
+    """clinic payments serializer"""
     response = []
 
     for payment in payments:
 
         car_tyre_clinic = Cartyreclinic.query.filter_by(
             id=payment.service_id).first_or_404(
-            description='Record with id={} is not available'.format(
-                payment.service_id))
+            description=f'Record with id={payment.service_id} is \
+                not available')
 
         vehicle = Vehicle.query.filter_by(id=payment.vehicle_id).first_or_404(
-            description='Record with id={} is not available'.format(
-                payment.vehicle_id))
+            description=f'Record with id={payment.vehicle_id} is \
+                not available')
 
         payment_dict = {
             'id': str(payment.id),
@@ -60,7 +64,7 @@ def clinic_pay_serializer(payments: ClinicPayment):
 
 
 def clinic_pay_single_serializer(payment):
-
+    """clinic payments serializer for single car"""
     car_tyre_clinic = Cartyreclinic.query.filter_by(
         id=payment["service_id"]).first_or_404(
         description='Cartyreclinic with id={} is not available'.format(
