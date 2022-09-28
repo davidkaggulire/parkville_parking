@@ -1,14 +1,17 @@
+"""vehicle_serializer"""
+
 from ..models import Cartype, Vehicle
 
 
 def response_serializer(vehicles: Vehicle):
+    """serializer for vehicle list"""
     response = []
 
     for vehicle in vehicles:
 
         car_type = Cartype.query.filter_by(id=vehicle.cartype_id).first_or_404(
-            description='Record with id={} is not available'.format(
-                vehicle.cartype_id))
+            description=f'Record with id={vehicle.cartype_id} is \
+                not available')
 
         vehicle_dict = {
             "id": str(vehicle.id),
@@ -40,6 +43,7 @@ def response_serializer(vehicles: Vehicle):
 
 
 def car_type_serializer(cartypes: Cartype):
+    """serializer for cartypes"""
     response = []
 
     for cartype in cartypes:
