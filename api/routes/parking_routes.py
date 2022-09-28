@@ -1,12 +1,15 @@
-import json
 from api import api, db
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
 
-from api.models import Bodacharge, Carcharge, Coastercharge, PaymentBodaboda, PaymentCar, PaymentCoaster, PaymentTaxi, PaymentTruck, Taxicharge, Truckcharge, Vehicle
-from api.serializers.parking_serializer import boda_parking_serializer, car_parking_serializer, coaster_parking_serializer, taxi_parking_serializer, truck_parking_serializer
+from api.models import Bodacharge, PaymentBodaboda, PaymentCar, PaymentCoaster
+from api.models import PaymentTaxi, PaymentTruck, Vehicle
+from api.serializers.parking_serializer import boda_parking_serializer
+from api.serializers.parking_serializer import car_parking_serializer
+from api.serializers.parking_serializer import coaster_parking_serializer
+from api.serializers.parking_serializer import taxi_parking_serializer
+from api.serializers.parking_serializer import truck_parking_serializer
 from schemas.payment_schema import PaymentSchema
-from ..serializers.charge_serializer import boda_serializer, car_serializer, coaster_serializer, taxi_serializer, truck_serializer
 
 from decorators.decorators import required_params
 
@@ -29,18 +32,17 @@ class CarPaymentList(Resource):
 
     @required_params(PaymentSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         vehicle_id = data['vehicle_id']
 
         PaymentSchema().validate(data)
         try:
+            vehicle = Vehicle.query.filter_by(id=vehicle_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    vehicle_id))
 
-            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
-                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
-
-            if vehicle.parking == True:
+            if vehicle.parking is True:
                 return make_response(jsonify({"message": "Paid already"}), 400)
 
             new_data = PaymentCar(**data)
@@ -49,7 +51,6 @@ class CarPaymentList(Resource):
             print(data)
 
             # update parking_flag to True - to know element updated.
-            
             vehicle.parking = True
             db.session.commit()
 
@@ -71,8 +72,9 @@ class CarPaymentList(Resource):
 class CarPaymentRecord(Resource):
     def get(self, payment_id):
         return PaymentCar.serialize(
-            PaymentCar.query.filter_by(id=payment_id)
-            .first_or_404(description='Record with id={} is not available'.format(payment_id))), 200
+            PaymentCar.query.filter_by(id=payment_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    payment_id))), 200
 
 
 class CoasterPaymentList(Resource):
@@ -85,7 +87,6 @@ class CoasterPaymentList(Resource):
 
     @required_params(PaymentSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         vehicle_id = data['vehicle_id']
@@ -93,10 +94,11 @@ class CoasterPaymentList(Resource):
         PaymentSchema().validate(data)
 
         try:
-            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
-                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
+            vehicle = Vehicle.query.filter_by(id=vehicle_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    vehicle_id))
 
-            if vehicle.parking == True:
+            if vehicle.parking is True:
                 return make_response(jsonify({"message": "Paid already"}), 400)
 
             new_data = PaymentCoaster(**data)
@@ -126,8 +128,9 @@ class CoasterPaymentList(Resource):
 class CoasterPaymentRecord(Resource):
     def get(self, payment_id):
         return PaymentCoaster.serialize(
-            PaymentCoaster.query.filter_by(id=payment_id)
-            .first_or_404(description='Record with id={} is not available'.format(payment_id))), 200
+            PaymentCoaster.query.filter_by(id=payment_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    payment_id))), 200
 
 
 class TruckPaymentList(Resource):
@@ -140,7 +143,6 @@ class TruckPaymentList(Resource):
 
     @required_params(PaymentSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         vehicle_id = data['vehicle_id']
@@ -148,10 +150,11 @@ class TruckPaymentList(Resource):
         PaymentSchema().validate(data)
 
         try:
-            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
-                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
+            vehicle = Vehicle.query.filter_by(id=vehicle_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    vehicle_id))
 
-            if vehicle.parking == True:
+            if vehicle.parking is True:
                 return make_response(jsonify({"message": "Paid already"}), 400)
 
             new_data = PaymentTruck(**data)
@@ -180,8 +183,9 @@ class TruckPaymentList(Resource):
 class TruckPaymentRecord(Resource):
     def get(self, payment_id):
         return PaymentTruck.serialize(
-            PaymentTruck.query.filter_by(id=payment_id)
-            .first_or_404(description='Record with id={} is not available'.format(payment_id))), 200
+            PaymentTruck.query.filter_by(id=payment_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    payment_id))), 200
 
 
 class TaxiPaymentList(Resource):
@@ -194,7 +198,6 @@ class TaxiPaymentList(Resource):
 
     @required_params(PaymentSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         vehicle_id = data["vehicle_id"]
@@ -202,10 +205,11 @@ class TaxiPaymentList(Resource):
         PaymentSchema().validate(data)
 
         try:
-            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
-                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
+            vehicle = Vehicle.query.filter_by(id=vehicle_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    vehicle_id))
 
-            if vehicle.parking == True:
+            if vehicle.parking is True:
                 return make_response(jsonify({"message": "Paid already"}), 400)
 
             new_data = PaymentTaxi(**data)
@@ -234,8 +238,9 @@ class TaxiPaymentList(Resource):
 class TaxiPaymentRecord(Resource):
     def get(self, payment_id):
         return PaymentTaxi.serialize(
-            PaymentTaxi.query.filter_by(id=payment_id)
-            .first_or_404(description='Record with id={} is not available'.format(payment_id))), 200
+            PaymentTaxi.query.filter_by(id=payment_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    payment_id))), 200
 
 
 class BodaPaymentList(Resource):
@@ -248,7 +253,6 @@ class BodaPaymentList(Resource):
 
     @required_params(PaymentSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         vehicle_id = data["vehicle_id"]
@@ -256,10 +260,11 @@ class BodaPaymentList(Resource):
         PaymentSchema().validate(data)
 
         try:
-            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
-                .first_or_404(description='Record with id={} is not available'.format(vehicle_id))
+            vehicle = Vehicle.query.filter_by(id=vehicle_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    vehicle_id))
 
-            if vehicle.parking == True:
+            if vehicle.parking is True:
                 return make_response(jsonify({"message": "Paid already"}), 400)
 
             new_data = Bodacharge(**data)
@@ -288,8 +293,9 @@ class BodaPaymentList(Resource):
 class BodaPaymentRecord(Resource):
     def get(self, payment_id):
         return Bodacharge.serialize(
-            Bodacharge.query.filter_by(id=payment_id)
-            .first_or_404(description='Record with id={} is not available'.format(payment_id))), 200
+            Bodacharge.query.filter_by(id=payment_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    payment_id))), 200
 
 
 api.add_resource(TruckPaymentList, "/truckpayments")
