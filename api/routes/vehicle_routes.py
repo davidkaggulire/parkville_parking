@@ -1,17 +1,21 @@
-from api import api
+"""vehicle_routes.py"""
+
+import datetime
+import json
+import phonenumbers
+
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
 from flask_jwt_extended import jwt_required
+from api import api
+from api import db
+
+from decorators.decorators import required_params, token_required
+from schemas.carschema import CreateSchema, SignoutSchema
+
 from ..models import Vehicle
 from ..serializers.vehicle_serializer import response_serializer
 
-from schemas.carschema import CreateSchema, SignoutSchema
-from decorators.decorators import required_params, token_required
-from api import db
-
-import json
-import phonenumbers
-import datetime
 
 BLANK = "'{}' cannot be blank"
 
@@ -27,9 +31,14 @@ _parser.add_argument('phone_number', type=str,
 
 
 class VehicleList(Resource):
+    """
+    vehicle list:
+    """
+
     @jwt_required()
     @token_required
     def get(self):
+        """return list of all vehicles"""
         # return "Hellow world", 200
         persons = Vehicle.query.all()
         response = response_serializer(persons)
@@ -40,6 +49,7 @@ class VehicleList(Resource):
     @token_required
     @required_params(CreateSchema())
     def post(self):
+        """register a new vehicle"""
         data = request.get_json()
 
         CreateSchema().validate(data)
@@ -108,19 +118,25 @@ class VehicleList(Resource):
 
 
 class VehicleRetrieve(Resource):
-    @jwt_required()
+    """single vehicle retrieve handler"""
     @token_required
+    @jwt_required()
     def get(self, vehicle_id):
+        """retrieve single vehicle"""
+        print(vehicle_id)
         return Vehicle.serialize(
             Vehicle.query.filter_by(id=vehicle_id).first_or_404(
-                        description='Record with id={} is unavailable'.format(
-                            vehicle_id))), 200
+                        description=f'Record with id={vehicle_id} \
+                            is unavailable')), 200
 
 
 class SignOutVehicle(Resource):
+    """signout vehicle handler"""
+
     @jwt_required()
     @token_required
     def get(self):
+        """get all signed out cars"""
         vehicles = Vehicle.query.filter_by(flag="signed out")
         response = response_serializer(vehicles)
         return response, 200
@@ -129,6 +145,7 @@ class SignOutVehicle(Resource):
     @token_required
     @required_params(SignoutSchema())
     def post(self):
+        """sign out car"""
         data = request.get_json()
 
         SignoutSchema().validate(data)
@@ -139,8 +156,7 @@ class SignOutVehicle(Resource):
 
         try:
             vehicle = Vehicle.query.filter_by(id=vehicle_id).first_or_404(
-                description='Vehicle with id={} is not available'.format(
-                    vehicle_id))
+                description=f'Vehicle with id={vehicle_id} is not available')
 
             if vehicle.flag == "admitted":
                 vehicle.flag = "signed out"
