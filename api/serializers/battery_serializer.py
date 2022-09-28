@@ -1,7 +1,10 @@
+"""battery_serializer"""
+
 from api.models import BatteryPayment, Batterysection, Vehicle
 
 
 def battery_section_list_serializer(sizes: Batterysection):
+    """serializer"""
     response = []
 
     for size in sizes:
@@ -22,6 +25,7 @@ def battery_section_list_serializer(sizes: Batterysection):
 
 
 def battery_list_payment_serializer(payments: BatteryPayment):
+    """serializer payment"""
     response = []
 
     for payment in payments:
@@ -59,6 +63,7 @@ def battery_list_payment_serializer(payments: BatteryPayment):
 
 
 def battery_single_payment_serializer(payment):
+    """serializer payment single"""
 
     battery = Batterysection.query.filter_by(
         id=payment["battery_id"]).first_or_404(
