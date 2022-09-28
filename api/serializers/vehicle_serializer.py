@@ -7,7 +7,8 @@ def response_serializer(vehicles: Vehicle):
     for vehicle in vehicles:
 
         car_type = Cartype.query.filter_by(id=vehicle.cartype_id).first_or_404(
-            description='Record with id={} is not available'.format(vehicle.cartype_id))
+            description='Record with id={} is not available'.format(
+                vehicle.cartype_id))
 
         vehicle_dict = {
             "id": str(vehicle.id),
