@@ -1,8 +1,9 @@
 from api import api
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
-from api.serializers.battery_serializer import battery_list_payment_serializer, battery_section_list_serializer, battery_single_payment_serializer
-
+from api.serializers.battery_serializer import battery_list_payment_serializer
+from api.serializers.battery_serializer import battery_section_list_serializer
+from api.serializers.battery_serializer import battery_single_payment_serializer
 from schemas.battery_schema import BatteryPaymentSchema, BatterySectionSchema
 from ..models import BatteryPayment, Batterysection, Vehicle
 
@@ -28,7 +29,6 @@ class BatterySectionList(Resource):
 
     @required_params(BatterySectionSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         BatterySectionSchema().validate(data)
@@ -55,8 +55,9 @@ class BatterySectionList(Resource):
 class BatterySectionRecord(Resource):
     def get(self, battery_id):
         return Batterysection.serialize(
-            Batterysection.query.filter_by(id=battery_id)
-            .first_or_404(description='Record with id={} is not available'.format(battery_id))), 200
+            Batterysection.query.filter_by(id=battery_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    battery_id))), 200
 
 
 class BatteryPaymentList(Resource):
@@ -79,16 +80,21 @@ class BatteryPaymentList(Resource):
 
         try:
 
-            vehicle = Vehicle.query.filter_by(id=vehicle_id)\
-                .first_or_404(description='Vehicle with id={} is not available'.format(vehicle_id))
+            vehicle = Vehicle.query.filter_by(id=vehicle_id).first_or_404(
+                description='Vehicle with id={} is not available'.format(
+                    vehicle_id))
             try:
-                payment = BatteryPayment.query.filter_by(vehicle_id=vehicle_id, battery_id=battery_id)\
-                    .first_or_404(description='Service with id={} and Vehicle with id={} is not available'.format(battery_id, vehicle_id))
+                payment = BatteryPayment.query.filter_by(
+                    vehicle_id=vehicle_id, battery_id=battery_id).first_or_404(
+                    description='Service with id={} and Vehicle with id={} \
+                        is not available'.format(
+                                battery_id, vehicle_id))
                 print(f"{payment} exists")
-                # if paid, return paid already otherwise convert vehicle.clinic = true
+
                 if payment:
-                    return make_response(jsonify({"message": "Battery size paid for already"}), 400)
-            except Exception as e:
+                    message = {"message": "Battery size paid for already"}
+                    return make_response(jsonify(message), 400)
+            except Exception:
                 new_data = BatteryPayment(**data)
                 db.session.add(new_data)
                 db.session.commit()
@@ -114,8 +120,9 @@ class BatteryPaymentList(Resource):
 class BatteryPaymentRecord(Resource):
     def get(self, payment_id):
         return BatteryPayment.serialize(
-            BatteryPayment.query.filter_by(id=payment_id)
-            .first_or_404(description='Record with id={} is not available'.format(payment_id))), 200
+            BatteryPayment.query.filter_by(id=payment_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    payment_id))), 200
 
 
 api.add_resource(BatterySectionList, "/batteries")
