@@ -1,8 +1,11 @@
+"""charge_serializer"""
+
 from ..models import Bodacharge, Carcharge, Coastercharge
 from ..models import Taxicharge, Truckcharge
 
 
 def truck_serializer(charges: Truckcharge):
+    """truck serializer"""
     response = []
 
     for charge in charges:
@@ -24,6 +27,7 @@ def truck_serializer(charges: Truckcharge):
 
 
 def taxi_serializer(charges: Taxicharge):
+    """taxi_serializer"""
     response = []
 
     for charge in charges:
@@ -45,6 +49,7 @@ def taxi_serializer(charges: Taxicharge):
 
 
 def coaster_serializer(charges: Coastercharge):
+    """coaster_serializer"""
     response = []
 
     for charge in charges:
@@ -66,6 +71,7 @@ def coaster_serializer(charges: Coastercharge):
 
 
 def car_serializer(charges: Carcharge):
+    """car_serializer"""
     response = []
 
     for charge in charges:
@@ -87,6 +93,7 @@ def car_serializer(charges: Carcharge):
 
 
 def boda_serializer(charges: Bodacharge):
+    """boda_serializer"""
     response = []
 
     for charge in charges:
