@@ -2,9 +2,11 @@ from api import api, db
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
 
-from api.models import Bodacharge, Carcharge, Coastercharge, Taxicharge, Truckcharge
-from ..serializers.charge_serializer import boda_serializer, car_serializer, coaster_serializer, taxi_serializer, truck_serializer
-
+from api.models import Bodacharge, Carcharge, Coastercharge
+from api.models import Truckcharge, Taxicharge
+from ..serializers.charge_serializer import boda_serializer, car_serializer
+from ..serializers.charge_serializer import taxi_serializer, truck_serializer
+from ..serializers.charge_serializer import coaster_serializer
 from schemas.charge_schema import ChargeSchema
 from decorators.decorators import required_params
 
@@ -27,7 +29,6 @@ class TruckChargeList(Resource):
 
     @required_params(ChargeSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         ChargeSchema().validate(data)
@@ -55,8 +56,9 @@ class TruckChargeList(Resource):
 class TruckChargeRecord(Resource):
     def get(self, charge_id):
         return Truckcharge.serialize(
-            Truckcharge.query.filter_by(id=charge_id)
-            .first_or_404(description='Record with id={} is not available'.format(charge_id))), 200
+            Truckcharge.query.filter_by(id=charge_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    charge_id))), 200
 
 
 class CoasterChargeList(Resource):
@@ -69,7 +71,6 @@ class CoasterChargeList(Resource):
 
     @required_params(ChargeSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         ChargeSchema().validate(data)
@@ -99,8 +100,9 @@ class CoasterChargeList(Resource):
 class CoasterChargeRecord(Resource):
     def get(self, charge_id):
         return Coastercharge.serialize(
-            Coastercharge.query.filter_by(id=charge_id)
-            .first_or_404(description='Record with id={} is not available'.format(charge_id))), 200
+            Coastercharge.query.filter_by(id=charge_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    charge_id))), 200
 
 
 class CarChargeList(Resource):
@@ -113,7 +115,6 @@ class CarChargeList(Resource):
 
     @required_params(ChargeSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         ChargeSchema().validate(data)
@@ -142,8 +143,9 @@ class CarChargeList(Resource):
 class CarChargeRecord(Resource):
     def get(self, charge_id):
         return Carcharge.serialize(
-            Carcharge.query.filter_by(id=charge_id)
-            .first_or_404(description='Record with id={} is not available'.format(charge_id))), 200
+            Carcharge.query.filter_by(id=charge_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    charge_id))), 200
 
 
 class TaxiChargeList(Resource):
@@ -156,7 +158,6 @@ class TaxiChargeList(Resource):
 
     @required_params(ChargeSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         ChargeSchema().validate(data)
@@ -185,8 +186,9 @@ class TaxiChargeList(Resource):
 class TaxiChargeRecord(Resource):
     def get(self, charge_id):
         return Taxicharge.serialize(
-            Taxicharge.query.filter_by(id=charge_id)
-            .first_or_404(description='Record with id={} is not available'.format(charge_id))), 200
+            Taxicharge.query.filter_by(id=charge_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    charge_id))), 200
 
 
 class BodaChargeList(Resource):
@@ -199,7 +201,6 @@ class BodaChargeList(Resource):
 
     @required_params(ChargeSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         ChargeSchema().validate(data)
@@ -228,8 +229,9 @@ class BodaChargeList(Resource):
 class BodaChargeRecord(Resource):
     def get(self, charge_id):
         return Bodacharge.serialize(
-            Bodacharge.query.filter_by(id=charge_id)
-            .first_or_404(description='Record with id={} is not available'.format(charge_id))), 200
+            Bodacharge.query.filter_by(id=charge_id).first_or_404(
+                description='Record with id={} is not available'.format(
+                    charge_id))), 200
 
 
 api.add_resource(TruckChargeList, "/truckcharges")
