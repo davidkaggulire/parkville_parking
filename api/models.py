@@ -1,17 +1,17 @@
-# models
-
-from api import db
-from datetime import datetime, timedelta
-
-import sqlalchemy.dialects.postgresql as postgresql
+"""models.py"""
 import uuid
-from api import bcrypt
+
+from datetime import datetime, timedelta
+import sqlalchemy.dialects.postgresql as postgresql
 import jwt
 
+from api import db
+from api import bcrypt
 from api import app
 
 
 class Cartype(db.Model):
+    """car types"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     type = db.Column(db.String(80), unique=True, nullable=False)
@@ -19,12 +19,14 @@ class Cartype(db.Model):
 
 
 class Truckcharge(db.Model):
+    """charges for trucks"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     charge = db.Column(db.String(80), nullable=False)
     duration = db.Column(db.String(80), unique=True, nullable=False)
 
     def serialize(self):
+        """serialize method"""
         return {
             'id': str(self.id),
             'charge': self.charge,
@@ -33,12 +35,14 @@ class Truckcharge(db.Model):
 
 
 class Taxicharge(db.Model):
+    """charges for taxis"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     charge = db.Column(db.String(80), nullable=False)
     duration = db.Column(db.String(80), unique=True, nullable=False)
 
     def serialize(self):
+        """serialize method"""
         return {
             'id': str(self.id),
             'charge': self.charge,
@@ -47,12 +51,14 @@ class Taxicharge(db.Model):
 
 
 class Coastercharge(db.Model):
+    """charges for coasters"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     charge = db.Column(db.String(80), nullable=False)
     duration = db.Column(db.String(80), unique=True, nullable=False)
 
     def serialize(self):
+        """serialize method"""
         return {
             'id': str(self.id),
             'charge': self.charge,
@@ -61,12 +67,14 @@ class Coastercharge(db.Model):
 
 
 class Carcharge(db.Model):
+    """charges for cars"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     charge = db.Column(db.String(80), nullable=False)
     duration = db.Column(db.String(80), unique=True, nullable=False)
 
     def serialize(self):
+        """serialize method"""
         return {
             'id': str(self.id),
             'charge': self.charge,
@@ -75,12 +83,14 @@ class Carcharge(db.Model):
 
 
 class Bodacharge(db.Model):
+    """charges for boda"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     charge = db.Column(db.String(80), nullable=False)
     duration = db.Column(db.String(80), unique=True, nullable=False)
 
     def serialize(self):
+        """serialize method"""
         return {
             'id': str(self.id),
             'charge': self.charge,
@@ -89,6 +99,7 @@ class Bodacharge(db.Model):
 
 
 class Vehicle(db.Model):
+    """vehicle class"""
     id = db.Column(postgresql.UUID(as_uuid=True), primary_key=True,
                    default=uuid.uuid4,
                    unique=True)
@@ -118,9 +129,9 @@ class Vehicle(db.Model):
         return self.driver_name
 
     def serialize(self):
+        """serialize method"""
         car_type = Cartype.query.filter_by(id=self.cartype_id).first_or_404(
-            description='Record with id={} is not available'.format(
-                self.cartype_id))
+            description=f'Record with id={self.cartype_id} is not available')
 
         return {
             'id': str(self.id),
@@ -142,6 +153,7 @@ class Vehicle(db.Model):
 
 
 class PaymentCar(db.Model):
+    """payment for cars"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     vehicle_id = db.Column(postgresql.UUID(as_uuid=True),
@@ -155,6 +167,7 @@ class PaymentCar(db.Model):
 
 
 class PaymentTruck(db.Model):
+    """payment for trucks"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     vehicle_id = db.Column(postgresql.UUID(as_uuid=True),
@@ -168,6 +181,7 @@ class PaymentTruck(db.Model):
 
 
 class PaymentTaxi(db.Model):
+    """payment for taxis"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     vehicle_id = db.Column(postgresql.UUID(as_uuid=True),
@@ -181,6 +195,7 @@ class PaymentTaxi(db.Model):
 
 
 class PaymentCoaster(db.Model):
+    """payment for coasters"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     vehicle_id = db.Column(postgresql.UUID(as_uuid=True),
@@ -194,6 +209,7 @@ class PaymentCoaster(db.Model):
 
 
 class PaymentBodaboda(db.Model):
+    """payment for bodas"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     vehicle_id = db.Column(postgresql.UUID(as_uuid=True),
@@ -207,6 +223,7 @@ class PaymentBodaboda(db.Model):
 
 
 class Cartyreclinic(db.Model):
+    """services in car clinic"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     service = db.Column(db.String(120), unique=True, nullable=False)
@@ -215,6 +232,7 @@ class Cartyreclinic(db.Model):
         'ClinicPayment', backref='car_tyre_clinic', lazy=True)
 
     def serialize(self):
+        """serialize method"""
         return {
             'id': str(self.id),
             'service': self.service,
@@ -223,6 +241,7 @@ class Cartyreclinic(db.Model):
 
 
 class ClinicPayment(db.Model):
+    """payment for services in car clinic"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     service_id = db.Column(postgresql.UUID(as_uuid=True),
@@ -235,6 +254,7 @@ class ClinicPayment(db.Model):
                           default=datetime.now)
 
     def serialize(self):
+        """serialize methods"""
         return {
             'id': str(self.id),
             'service_id': str(self.service_id),
@@ -245,6 +265,7 @@ class ClinicPayment(db.Model):
 
 
 class Batterysection(db.Model):
+    """battery sizes"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     battery_size = db.Column(db.String(120), unique=True, nullable=False)
@@ -252,6 +273,7 @@ class Batterysection(db.Model):
         'BatteryPayment', backref='batterysection', lazy=True)
 
     def serialize(self):
+        """serialize"""
         return {
             'id': str(self.id),
             'battery_size': self.battery_size,
@@ -259,6 +281,7 @@ class Batterysection(db.Model):
 
 
 class BatteryPayment(db.Model):
+    """payment for batteries"""
     id = db.Column(postgresql.UUID(as_uuid=True),
                    primary_key=True, default=uuid.uuid4, unique=True)
     battery_id = db.Column(postgresql.UUID(as_uuid=True),
@@ -273,6 +296,7 @@ class BatteryPayment(db.Model):
                           default=datetime.now)
 
     def serialize(self):
+        """serialize method"""
         return {
             'id': str(self.id),
             'battery_id': str(self.battery_id),
@@ -336,8 +360,7 @@ class User(db.Model):
             is_blacklisted_token = BlacklistToken.check_blacklist(auth_token)
             if is_blacklisted_token:
                 return 'Token blacklisted. Please log in again.'
-            else:
-                return payload['sub']
+            return payload['sub']
 
         except jwt.ExpiredSignatureError:
             return 'Signature expired. Please log in again.'
@@ -360,13 +383,13 @@ class BlacklistToken(db.Model):
         self.blacklisted_on = datetime.now()
 
     def __repr__(self):
-        return '<id: token: {}'.format(self.token)
+        return f'<id: token: {self.token}'
 
     @staticmethod
     def check_blacklist(auth_token):
+        """check token if in blacklist"""
         # check whether auth token has been blacklisted
         res = BlacklistToken.query.filter_by(token=str(auth_token)).first()
         if res:
             return True
-        else:
-            return False
+        return False
