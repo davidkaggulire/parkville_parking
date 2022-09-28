@@ -27,7 +27,6 @@ class CarTypeList(Resource):
 
     @required_params(CarTypeSchema())
     def post(self):
-        args = _parser.parse_args()
         data = request.get_json()
 
         CarTypeSchema().validate(data)
@@ -52,6 +51,4 @@ class CarTypeList(Resource):
             return make_response(jsonify(error), 400)
 
 
-
 api.add_resource(CarTypeList, "/cartypes")
-
