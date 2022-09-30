@@ -150,8 +150,8 @@ class BatteryPaymentRecord(Resource):
                     not available')), 200
 
 
-api.add_resource(BatterySectionList, "/batteries")
-api.add_resource(BatterySectionRecord, "/batteries/<battery_id>")
+api.add_resource(BatterySectionList, "/api/v1/batteries")
+api.add_resource(BatterySectionRecord, "/api/v1/batteries/<battery_id>")
 
-api.add_resource(BatteryPaymentList, "/batterypayments")
-api.add_resource(BatteryPaymentRecord, "/batterypayments/<payment_id>")
+api.add_resource(BatteryPaymentList, "/api/v1/batterypayments")
+api.add_resource(BatteryPaymentRecord, "/api/v1/batterypayments/<payment_id>")

@@ -131,8 +131,8 @@ class ClinicPaymentRecord(Resource):
                     payment_id))), 200
 
 
-api.add_resource(ClinicServiceList, "/cartyreservices")
-api.add_resource(ClinicServiceRecord, "/cartyreservices/<service_id>")
+api.add_resource(ClinicServiceList, "/api/v1/cartyreservices")
+api.add_resource(ClinicServiceRecord, "/api/v1/cartyreservices/<service_id>")
 
-api.add_resource(ClinicPaymentList, "/clinicpayment")
-api.add_resource(ClinicPaymentRecord, "/clinicpayment/<payment_id>")
+api.add_resource(ClinicPaymentList, "/api/v1/clinicpayment")
+api.add_resource(ClinicPaymentRecord, "/api/v1/clinicpayment/<payment_id>")

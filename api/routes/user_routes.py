@@ -100,6 +100,8 @@ class LoginAPI(Resource):
                         'status': 'success',
                         'message': 'Successfully logged in.',
                         'auth_token': auth_token,
+                        'expiresIn': 3600,
+                        'email': user.email
                         # 'jti': access_token
                     }
                     return make_response(jsonify(responseObject), 200)
@@ -201,8 +203,7 @@ class LogoutAPI(Resource):
                 if is_blacklisted_token:
                     responseObject = {
                         'status': 'success',
-                        'message': 'Token blacklisted already \
-                            Please log in again.'
+                        'message': 'Token blacklisted already. Please log in again.'
                     }
                     return make_response(jsonify(responseObject), 200)
                 else:
@@ -247,7 +248,7 @@ def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
     return token_in_database is not None
 
 
-api.add_resource(RegisterAPI, "/auth/signup")
-api.add_resource(LoginAPI, "/auth/login")
-api.add_resource(UserAPI, "/auth/status")
-api.add_resource(LogoutAPI, "/auth/logout")
+api.add_resource(RegisterAPI, "/api/v1/auth/signup")
+api.add_resource(LoginAPI, "/api/v1/auth/login")
+api.add_resource(UserAPI, "/api/v1/auth/status")
+api.add_resource(LogoutAPI, "/api/v1/auth/logout")

@@ -265,17 +265,17 @@ class BodaChargeRecord(Resource):
                     charge_id))), 200
 
 
-api.add_resource(TruckChargeList, "/truckcharges")
-api.add_resource(TruckChargeRecord, "/truckcharges/<charge_id>")
+api.add_resource(TruckChargeList, "/api/v1/truckcharges")
+api.add_resource(TruckChargeRecord, "/api/v1/truckcharges/<charge_id>")
 
-api.add_resource(CoasterChargeList, "/coastercharges")
-api.add_resource(CoasterChargeRecord, "/coastercharges/<charge_id>")
+api.add_resource(CoasterChargeList, "/api/v1/coastercharges")
+api.add_resource(CoasterChargeRecord, "/api/v1/coastercharges/<charge_id>")
 
-api.add_resource(CarChargeList, "/carcharges")
-api.add_resource(CarChargeRecord, "/carcharges/<charge_id>")
+api.add_resource(CarChargeList, "/api/v1/carcharges")
+api.add_resource(CarChargeRecord, "/api/v1/carcharges/<charge_id>")
 
-api.add_resource(TaxiChargeList, "/taxicharges")
-api.add_resource(TaxiChargeRecord, "/taxicharges/<charge_id>")
+api.add_resource(TaxiChargeList, "/api/v1/taxicharges")
+api.add_resource(TaxiChargeRecord, "/api/v1/taxicharges/<charge_id>")
 
-api.add_resource(BodaChargeList, "/bodacharges")
-api.add_resource(BodaChargeRecord, "/bodacharges/<charge_id>")
+api.add_resource(BodaChargeList, "/api/v1/bodacharges")
+api.add_resource(BodaChargeRecord, "/api/v1/bodacharges/<charge_id>")

@@ -329,17 +329,17 @@ class BodaPaymentRecord(Resource):
                     payment_id))), 200
 
 
-api.add_resource(TruckPaymentList, "/truckpayments")
-api.add_resource(TruckPaymentRecord, "/truckpayments/<payment_id>")
+api.add_resource(TruckPaymentList, "/api/v1/truckpayments")
+api.add_resource(TruckPaymentRecord, "/api/v1/truckpayments/<payment_id>")
 
-api.add_resource(CoasterPaymentList, "/coasterpayments")
-api.add_resource(CoasterPaymentRecord, "/coasterpayments/<payment_id>")
+api.add_resource(CoasterPaymentList, "/api/v1/coasterpayments")
+api.add_resource(CoasterPaymentRecord, "/api/v1/coasterpayments/<payment_id>")
 
-api.add_resource(CarPaymentList, "/carpayments")
-api.add_resource(CarPaymentRecord, "/carpayments/<payment_id>")
+api.add_resource(CarPaymentList, "/api/v1/carpayments")
+api.add_resource(CarPaymentRecord, "/api/v1/carpayments/<payment_id>")
 
-api.add_resource(TaxiPaymentList, "/taxipayments")
-api.add_resource(TaxiPaymentRecord, "/taxipayments/<payment_id>")
+api.add_resource(TaxiPaymentList, "/api/v1/taxipayments")
+api.add_resource(TaxiPaymentRecord, "/api/v1/taxipayments/<payment_id>")
 
-api.add_resource(BodaPaymentList, "/bodapayments")
-api.add_resource(BodaPaymentRecord, "/bodapayments/<payment_id>")
+api.add_resource(BodaPaymentList, "/api/v1/bodapayments")
+api.add_resource(BodaPaymentRecord, "/api/v1/bodapayments/<payment_id>")

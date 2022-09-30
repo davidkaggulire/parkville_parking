@@ -49,4 +49,4 @@ class SignedoutVehicles(Resource):
             return make_response(jsonify(error), 400)
 
 
-api.add_resource(SignedoutVehicles, "/signedout")
+api.add_resource(SignedoutVehicles, "/api/v1/signedout")

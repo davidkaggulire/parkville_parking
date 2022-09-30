@@ -56,4 +56,4 @@ class CarTypeList(Resource):
             return make_response(jsonify(error), 400)
 
 
-api.add_resource(CarTypeList, "/cartypes")
+api.add_resource(CarTypeList, "/api/v1/cartypes")
