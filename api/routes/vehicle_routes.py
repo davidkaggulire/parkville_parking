@@ -179,7 +179,7 @@ class SignOutVehicle(Resource):
             return make_response(jsonify(error), 400)
 
 
-api.add_resource(VehicleList, "/api/v1/vehicle")
+api.add_resource(VehicleList, "/api/v1/vehicles")
 api.add_resource(VehicleRetrieve, '/api/v1/vehicle/<vehicle_id>')
 
 api.add_resource(SignOutVehicle, '/api/v1/vehicle/signout')
