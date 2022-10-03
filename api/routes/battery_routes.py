@@ -70,8 +70,7 @@ class BatterySectionRecord(Resource):
         """serialize"""
         return Batterysection.serialize(
             Batterysection.query.filter_by(id=battery_id).first_or_404(
-                description=f'Record with id={battery_id} is \
-                    not available')), 200
+                description=f'Record with id={battery_id} is not available')), 200
 
 
 class BatteryPaymentList(Resource):
@@ -146,8 +145,7 @@ class BatteryPaymentRecord(Resource):
         """return single battery payment"""
         return BatteryPayment.serialize(
             BatteryPayment.query.filter_by(id=payment_id).first_or_404(
-                description=f'Record with id={payment_id} is \
-                    not available')), 200
+                description=f'Record with id={payment_id} is not available')), 200
 
 
 api.add_resource(BatterySectionList, "/api/v1/batteries")

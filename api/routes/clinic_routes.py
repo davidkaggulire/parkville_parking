@@ -36,6 +36,8 @@ class ClinicServiceList(Resource):
         return response, 200
         # return [PersonDetails.serialize(record) for record in records]
 
+    @jwt_required()
+    @token_required
     @required_params(CarTyreClinicSchema())
     def post(self):
         data = request.get_json()
@@ -62,6 +64,8 @@ class ClinicServiceList(Resource):
 
 
 class ClinicServiceRecord(Resource):
+    @jwt_required()
+    @token_required
     def get(self, service_id):
         return Cartyreclinic.serialize(
             Cartyreclinic.query.filter_by(id=service_id).first_or_404(
@@ -70,11 +74,15 @@ class ClinicServiceRecord(Resource):
 
 
 class ClinicPaymentList(Resource):
+    @jwt_required()
+    @token_required
     def get(self):
         services = ClinicPayment.query.all()
         response = clinic_pay_serializer(services)
         return response, 200
 
+    @jwt_required()
+    @token_required
     @required_params(ClinicPaymentSchema())
     def post(self):
         # args = _parser.parse_args()
@@ -124,6 +132,8 @@ class ClinicPaymentList(Resource):
 
 
 class ClinicPaymentRecord(Resource):
+    @jwt_required()
+    @token_required
     def get(self, payment_id):
         return ClinicPayment.serialize(
             ClinicPayment.query.filter_by(id=payment_id).first_or_404(
