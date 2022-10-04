@@ -5,7 +5,7 @@ import string
 
 
 class CreateSchema(Schema):
-    ALLOWED = string.ascii_letters
+    ALLOWED = string.ascii_letters + string.whitespace
     PLATES = string.ascii_uppercase + string.digits
     NIN = string.ascii_uppercase + string.digits
     message_required = {"required": "Driver_name is required."}
