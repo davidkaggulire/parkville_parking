@@ -7,7 +7,7 @@ def response_serializer(vehicles: Vehicle):
     """serializer for vehicle list"""
     response = []
 
-    for vehicle in vehicles:
+    for vehicle in vehicles.items:
 
         car_type = Cartype.query.filter_by(id=vehicle.cartype_id).first_or_404(
             description=f'Record with id={vehicle.cartype_id} is \
@@ -34,10 +34,22 @@ def response_serializer(vehicles: Vehicle):
 
         response.append(vehicle_dict)
 
+    meta = {
+        "page": vehicles.page,
+        'pages': vehicles.pages,
+        'total_count': vehicles.total,
+        'prev_page': vehicles.prev_num,
+        'next_page': vehicles.next_num,
+        'has_next': vehicles.has_next,
+        'has_prev': vehicles.has_prev,
+
+    }
+
     final_output = {
         "status": "success",
         "results": len(response),
-        "vehicles": response
+        "vehicles": response,
+        "meta": meta
     }
 
     return final_output
