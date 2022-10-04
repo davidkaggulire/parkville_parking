@@ -39,11 +39,14 @@ class VehicleList(Resource):
     @token_required
     def get(self):
         """return list of all vehicles"""
-        # return "Hellow world", 200
-        persons = Vehicle.query.all()
+        print(request.args)
+        page = request.args.get('page', 1, type=int)
+        print(page)
+        per_page = request.args.get('per_page', 5, type=int)
+
+        persons = Vehicle.query.paginate(page=page, per_page=per_page)
         response = response_serializer(persons)
         return response, 200
-        # return [PersonDetails.serialize(record) for record in records]
 
     @jwt_required()
     @token_required
