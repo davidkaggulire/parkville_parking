@@ -23,7 +23,10 @@ class CarTypeList(Resource):
     @token_required
     def get(self):
         # return "Hellow world", 200
-        charges = Cartype.query.all()
+
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 5, type=int)
+        charges = Cartype.query.paginate(page=page, per_page=per_page)
         response = car_type_serializer(charges)
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200

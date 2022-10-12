@@ -25,7 +25,9 @@ class TruckChargeList(Resource):
     @token_required
     def get(self):
         # return "Hellow world", 200
-        charges = Truckcharge.query.all()
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 5, type=int)
+        charges = Truckcharge.query.paginate(page=page, per_page=per_page)
         response = truck_serializer(charges)
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
@@ -73,7 +75,9 @@ class CoasterChargeList(Resource):
     @token_required
     def get(self):
         # return "Hellow world", 200
-        charges = Coastercharge.query.all()
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 5, type=int)
+        charges = Coastercharge.query.paginate(page=page, per_page=per_page)
         response = coaster_serializer(charges)
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
@@ -123,7 +127,9 @@ class CarChargeList(Resource):
     @token_required
     def get(self):
         # return "Hellow world", 200
-        charges = Carcharge.query.all()
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 5, type=int)
+        charges = Carcharge.query.paginate(page=page, per_page=per_page)
         response = car_serializer(charges)
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
@@ -172,7 +178,9 @@ class TaxiChargeList(Resource):
     @token_required
     def get(self):
         # return "Hellow world", 200
-        charges = Taxicharge.query.all()
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 5, type=int)
+        charges = Taxicharge.query.paginate(page=page, per_page=per_page)
         response = taxi_serializer(charges)
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
@@ -221,7 +229,9 @@ class BodaChargeList(Resource):
     @token_required
     def get(self):
         # return "Hellow world", 200
-        charges = Bodacharge.query.all()
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 5, type=int)
+        charges = Bodacharge.query.paginate(page=page, per_page=per_page)
         response = boda_serializer(charges)
         return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200

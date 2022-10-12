@@ -45,7 +45,7 @@ class SignedoutVehicles(Resource):
             print(e)
             error = {
                 "status": "error",
-                "error": str(e)
+                "error": "No vehicles found"
             }
             return make_response(jsonify(error), 400)
 

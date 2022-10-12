@@ -59,7 +59,7 @@ def car_type_serializer(cartypes: Cartype):
     """serializer for cartypes"""
     response = []
 
-    for cartype in cartypes:
+    for cartype in cartypes.items:
 
         car_type_dict = {
             "id": str(cartype.id),
@@ -67,11 +67,23 @@ def car_type_serializer(cartypes: Cartype):
         }
 
         response.append(car_type_dict)
+    
+    meta = {
+        "page": cartypes.page,
+        'pages': cartypes.pages,
+        'total_count': cartypes.total,
+        'prev_page': cartypes.prev_num,
+        'next_page': cartypes.next_num,
+        'has_next': cartypes.has_next,
+        'has_prev': cartypes.has_prev,
+
+    }
 
     final_output = {
         "status": "success",
         "results": len(response),
-        "car_types": response
+        "car_types": response,
+        "meta": meta
     }
 
     return final_output

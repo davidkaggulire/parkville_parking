@@ -31,7 +31,13 @@ class ClinicServiceList(Resource):
         current_identity = get_jwt_identity()
         print("this is the current identity")
         print(current_identity)
-        services = Cartyreclinic.query.all()
+
+        print(request.args)
+        page = request.args.get('page', 1, type=int)
+        print(page)
+        per_page = request.args.get('per_page', 5, type=int)
+
+        services = Cartyreclinic.query.paginate(page=page, per_page=per_page)
         response = clinic_serializer(services)
         return response, 200
         # return [PersonDetails.serialize(record) for record in records]

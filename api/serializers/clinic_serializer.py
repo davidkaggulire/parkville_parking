@@ -7,7 +7,7 @@ def clinic_serializer(services: Cartyreclinic):
     """clinic serializer"""
     response = []
 
-    for service in services:
+    for service in services.items:
         service_dict = {
             'id': str(service.id),
             "service": service.service,
@@ -16,10 +16,22 @@ def clinic_serializer(services: Cartyreclinic):
 
         response.append(service_dict)
 
+    meta = {
+        "page": services.page,
+        'pages': services.pages,
+        'total_count': services.total,
+        'prev_page': services.prev_num,
+        'next_page': services.next_num,
+        'has_next': services.has_next,
+        'has_prev': services.has_prev,
+
+    }
+
     final_output = {
         "status": "success",
         "results": len(response),
-        "clinic_services": response
+        "clinic_services": response,
+        "meta": meta
     }
 
     return final_output
