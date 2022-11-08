@@ -50,8 +50,8 @@ class SignedoutVehicles(Resource):
             return make_response(jsonify(error), 400)
 
 
-class Home():
-    def get():
+class Home(Resource):
+    def get(self):
         return 'Home Page Route'
 
 api.add_resource(SignedoutVehicles, "/api/v1/signedout")
