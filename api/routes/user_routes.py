@@ -108,7 +108,7 @@ class LoginAPI(Resource):
             else:
                 responseObject = {
                     'status': 'fail',
-                    'message': 'User does not exist.'
+                    'message': 'Invalid email or password'
                 }
                 return make_response(jsonify(responseObject), 404)
         except Exception as e:
