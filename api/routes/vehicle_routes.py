@@ -140,7 +140,11 @@ class SignOutVehicle(Resource):
     @token_required
     def get(self):
         """get all signed out cars"""
-        vehicles = Vehicle.query.filter_by(flag="signed out")
+        print(request.args)
+        page = request.args.get('page', 1, type=int)
+        print(page)
+        per_page = request.args.get('per_page', 5, type=int)
+        vehicles = Vehicle.query.filter_by(flag="signed out").paginate(page=page, per_page=per_page)
         response = response_serializer(vehicles)
         return response, 200
 
@@ -183,6 +187,6 @@ class SignOutVehicle(Resource):
 
 
 api.add_resource(VehicleList, "/api/v1/vehicles")
-api.add_resource(VehicleRetrieve, '/api/v1/vehicle/<vehicle_id>')
+api.add_resource(VehicleRetrieve, '/api/v1/vehicles/<vehicle_id>')
 
 api.add_resource(SignOutVehicle, '/api/v1/vehicle/signout')
