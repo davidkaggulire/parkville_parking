@@ -148,7 +148,8 @@ class Vehicle(db.Model):
             'car_type': car_type.type,
             'battery': self.battery,
             'parking': self.parking,
-            'clinic': self.clinic
+            'clinic': self.clinic,
+            "flag": self.flag
         }
 
 
