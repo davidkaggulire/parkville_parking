@@ -24,13 +24,13 @@ migrate = Migrate(app, db)
 # db.create_all()
 
 # to eliminate circular imports
-from api.routes import vehicle_routes
-from api.routes import charge_routes
-from api.routes import cartype_routes
-from api.routes import parking_routes
-from api.routes import clinic_routes, battery_routes, admin_routes
-from api.routes import user_routes
-from api.models import BlacklistToken
+from .routes import vehicle_routes
+from .routes import charge_routes
+from .routes import cartype_routes
+from .routes import parking_routes
+from .routes import clinic_routes, battery_routes, admin_routes
+from .routes import user_routes
+from .models import BlacklistToken
 
 
 @jwt.token_in_blocklist_loader
