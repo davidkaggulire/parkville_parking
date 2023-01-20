@@ -22,6 +22,12 @@ class Config():
 class ProductionConfig(Config):
     """production config"""
     DEBUG = False
+    SQLALCHEMY_DATABASE_URI = (
+        f'postgresql+psycopg2://{os.getenv("POSTGRES_USER")}:' +
+        f'{os.getenv("POSTGRES_PW")}@' +
+        f'{os.getenv("POSTGRES_HOST")}/' +
+        f'{os.getenv("POSTGRES_DB")}'
+    )
 
 
 class StagingConfig(Config):
