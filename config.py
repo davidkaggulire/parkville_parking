@@ -3,11 +3,17 @@
 import os
 from dotenv import load_dotenv
 
+import sqlalchemy
+
+from sqlalchemy.engine.url import make_url
+from supabase import create_client, Client
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 load_dotenv()
+
+# url = make_url(engine.url)
 
 
 class Config():
@@ -21,13 +27,10 @@ class Config():
 
 class ProductionConfig(Config):
     """production config"""
+    url: str = os.environ.get("SUPABASE_URL")
+    key: str = os.environ.get("SUPABASE_KEY")
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = (
-        f'postgresql+psycopg2://{os.getenv("POSTGRES_USER")}:' +
-        f'{os.getenv("POSTGRES_PW")}@' +
-        f'{os.getenv("POSTGRES_HOST")}/' +
-        f'{os.getenv("POSTGRES_DB")}'
-    )
+    DEVELOPMENT = True
 
 
 class StagingConfig(Config):
