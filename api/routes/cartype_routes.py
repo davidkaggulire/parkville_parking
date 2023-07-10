@@ -1,6 +1,8 @@
 from api import api, db
 from flask_restful import Resource, reqparse
 from flask import jsonify, request, make_response
+from controllers.postgresql_controller import PostgreSQLDatabase
+from controllers.supabase_controller import Supabase
 
 from api.models import Cartype
 from api.serializers.vehicle_serializer import car_type_serializer
@@ -39,17 +41,33 @@ class CarTypeList(Resource):
 
         CarTypeSchema().validate(data)
         try:
-            new_data = Cartype(**data)
-            db.session.add(new_data)
-            db.session.commit()
-            print(data)
 
-            message = {
-                "status": "success",
-                "message": "Car type saved successfully",
-                "vehicle": data
-            }
-            return make_response(jsonify(message), 201)
+            db = Supabase()
+            # db = PostgreSQLDatabase()
+            db.connect()
+
+            status, created = db.create_car_type(data)
+
+            if status:
+                print(created)
+
+            # new_data = Cartype(**data)
+            # db.session.add(new_data)
+            # db.session.commit()
+            # print(data)
+
+                message = {
+                    "status": "success",
+                    "message": "Car type saved successfully",
+                    "vehicle": created
+                }
+                return jsonify(message), 201
+            else:
+                message = {
+                "status": "error",
+                "message": created,
+                }
+                return make_response(jsonify(message), 500)
         except Exception as e:
             print(e)
             error = {

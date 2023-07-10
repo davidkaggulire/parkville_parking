@@ -51,7 +51,9 @@ class RegisterAPI(Resource):
                     responseObject = {
                         'status': 'success',
                         'message': 'Successfully registered.',
-                        'auth_token': auth_token
+                        'expiresIn': 3600,
+                        'auth_token': auth_token,
+                        'email': user.email
                     }
 
                     print(responseObject)
