@@ -24,13 +24,20 @@ class CarTypeList(Resource):
     @jwt_required()
     @token_required
     def get(self):
-        # return "Hellow world", 200
+        db = Supabase()
+        # db = PostgreSQLDatabase()
+        db.connect()
 
-        page = request.args.get('page', 1, type=int)
-        per_page = request.args.get('per_page', 5, type=int)
-        charges = Cartype.query.paginate(page=page, per_page=per_page)
-        response = car_type_serializer(charges)
-        return response, 200
+        status, value_read = db.read_car_type()
+
+        if status:
+            return value_read, 200
+
+        # page = request.args.get('page', 1, type=int)
+        # per_page = request.args.get('per_page', 5, type=int)
+        # charges = Cartype.query.paginate(page=page, per_page=per_page)
+        # response = car_type_serializer(charges)
+        # return response, 200
         # return [Charge.serialize(charge) for charge in charges], 200
 
     @jwt_required()
@@ -50,18 +57,20 @@ class CarTypeList(Resource):
 
             if status:
                 print(created)
+                if created == 'already added':
+                    message = {
+                        "status": "info",
+                        "message": "Car type already exists",
+                    }
 
-            # new_data = Cartype(**data)
-            # db.session.add(new_data)
-            # db.session.commit()
-            # print(data)
-
-                message = {
-                    "status": "success",
-                    "message": "Car type saved successfully",
-                    "vehicle": created
-                }
-                return jsonify(message), 201
+                    return make_response(jsonify(message), 200)
+                else:
+                    message = {
+                        "status": "success",
+                        "message": "Car type saved successfully",
+                        "vehicle": created
+                    }
+                    return make_response(jsonify(message), 201)
             else:
                 message = {
                 "status": "error",

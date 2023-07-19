@@ -5,6 +5,7 @@ import os
 from supabase import create_client, Client
 
 import datetime
+import json
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from dotenv import load_dotenv
@@ -26,11 +27,27 @@ key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
 
+def serialize_cars(cartypes):
+    """serializer for cartypes"""
+    response = []
+
+    for cartype in cartypes:
+        response.append(cartype)
+
+    final_output = {
+        "status": "success",
+        "results": len(response),
+        "car_types": response,
+    }
+
+    return final_output
+
 class Supabase(IDatabase):
     """postgresql database"""
     def __init__(self):
         pass
     __instance = None
+
 
     def connect(self):
         try:
@@ -47,32 +64,34 @@ class Supabase(IDatabase):
         """creates record that are saved into the database"""
         try:
             print(data)
-            # new_data = Cartype(**data)
-            # db.session.add(new_data)
-            # db.session.commit()
-            # print(data)
             value = data['type']
-            print(value)
 
-            output = supabase.table("cartype").insert(**data).execute()
+            exists = supabase.table("cartype").select("*").filter('type', "eq", value).execute().data
+            if len(exists) > 0:
+                print("already added")
+                message = "already added"
+                return True, message
+            else:
+                res = supabase.table("cartype").insert(data).execute()
 
-            return True, output['data']
+                print(res.json())
+                car_type = res.json()
+                new_data = json.loads(car_type)
 
-            # if output['status_code'] == 201:
+                output = new_data["data"][0]
+                print(output)
 
-            #     return True, value
-            # else:
-            #     return 'Error saving data'
+                return True, output
         except Exception as e:
+            print(e)
             return False, e
 
     def read_car_type(self):
         """views record in database"""
         try:
-            page = request.args.get('page', 1, type=int)
-            per_page = request.args.get('per_page', 5, type=int)
-            charges = Cartype.query.paginate(page=page, per_page=per_page)
-            response = car_type_serializer(charges)
+            data = supabase.table('cartype').select("*").execute().data
+            response = serialize_cars(data)
+
             return True, response
         except Exception as e :
             return False, e
