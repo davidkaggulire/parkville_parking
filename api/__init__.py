@@ -18,7 +18,10 @@ api = Api(app)
 app.config.from_object(app_config["production"])
 # app.config.from_object(app_config[config_name])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-CORS(app)
+# CORS(app)
+# allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5000,https://parkville-parking.vercel.app").split(",")
+CORS(app, resources={r"/*": {"origins": ["https://parkville-parking.vercel.app", "http://localhost:5000"]}})
+
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 
